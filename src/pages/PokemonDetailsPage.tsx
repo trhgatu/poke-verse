@@ -193,7 +193,7 @@ export const PokemonDetailsPage: React.FC = () => {
     }
   };
 
-  const getStatColor = (statName: string, value: number) => {
+  const getStatColor = (_statName: string, value: number) => {
     if (value >= 150) return "bg-gradient-to-r from-purple-500 to-purple-600";
     if (value >= 100) return "bg-gradient-to-r from-blue-500 to-blue-600";
     if (value >= 70) return "bg-gradient-to-r from-green-500 to-green-600";
