@@ -1,10 +1,13 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart } from 'lucide-react';
+import { Heart, Map, Dna } from 'lucide-react';
 import { Button } from './ui/button';
+import { LanguageSwitcher } from './LanguageSwitcher';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export const NavBar: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   return (
     <header className="w-full bg-zinc-900 border-b border-zinc-800 text-white sticky top-0 z-50 shadow-lg backdrop-blur-sm bg-opacity-90">
@@ -23,11 +26,29 @@ export const NavBar: React.FC = () => {
         <div className="flex items-center space-x-4">
           <Button
             variant="ghost"
+            onClick={() => navigate('/regions')}
+            className="flex items-center gap-2 hover:bg-zinc-800 transition-all duration-300"
+          >
+            <Map size={20} className="text-blue-500" />
+            <span className="hidden md:inline">{t('nav.regions')}</span>
+          </Button>
+
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/evolution-simulator')}
+            className="flex items-center gap-2 hover:bg-zinc-800 transition-all duration-300"
+          >
+            <Dna size={20} className="text-green-500" />
+            <span className="hidden md:inline">{t('nav.evolution')}</span>
+          </Button>
+
+          <Button
+            variant="ghost"
             onClick={() => navigate('/favorites')}
             className="flex items-center gap-2 hover:bg-zinc-800 transition-all duration-300"
           >
             <Heart size={20} className="text-red-500" />
-            <span className="hidden md:inline">Favorites</span>
+            <span className="hidden md:inline">{t('nav.favorites')}</span>
           </Button>
 
           <Button
@@ -35,8 +56,10 @@ export const NavBar: React.FC = () => {
             onClick={() => navigate('/')}
             className="hidden md:flex items-center gap-2 bg-gradient-to-r from-zinc-800 to-zinc-900 hover:from-zinc-700 hover:to-zinc-800 border-zinc-700 transition-all duration-300"
           >
-            All Pokemon
+            {t('nav.allPokemon')}
           </Button>
+
+          <LanguageSwitcher />
         </div>
       </div>
     </header>

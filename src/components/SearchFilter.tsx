@@ -1,6 +1,7 @@
 import React from 'react';
 import { Search, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface SearchFilterProps {
   value: string;
@@ -15,6 +16,8 @@ export const SearchFilter: React.FC<SearchFilterProps> = ({
   placeholder = "Search Pokémon...",
   resultsCount
 }) => {
+  const { t } = useLanguage();
+
   return (
     <div className="w-full">
       <div className="relative">
@@ -47,7 +50,7 @@ export const SearchFilter: React.FC<SearchFilterProps> = ({
           animate={{ opacity: 1 }}
           className="mt-2 text-center text-sm text-zinc-500"
         >
-          {resultsCount} {resultsCount === 1 ? 'Pokémon' : 'Pokémon'} found
+          {resultsCount} {resultsCount === 1 ? t('home.search.button') : t('home.search.button')}
         </motion.div>
       )}
     </div>

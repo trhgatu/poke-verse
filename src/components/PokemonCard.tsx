@@ -6,6 +6,7 @@ import { getPokemonByName } from '../services/api';
 import { Pokemon } from '../types/pokemon';
 import { cn, formatPokemonId, capitalizeFirstLetter, getColorByType } from '../lib/utils';
 import { usePokemonStore } from '../store/pokemonStore';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface PokemonCardProps {
   name: string;
@@ -13,6 +14,7 @@ interface PokemonCardProps {
 }
 
 export const PokemonCard: React.FC<PokemonCardProps> = ({ name }) => {
+  const { t } = useLanguage();
   const [pokemon, setPokemon] = useState<Pokemon | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isHovering, setIsHovering] = useState(false);
@@ -98,6 +100,8 @@ export const PokemonCard: React.FC<PokemonCardProps> = ({ name }) => {
               opacity: isHovering || isFavorite ? 1 : 0.8,
               y: isHovering && !isFavorite ? -3 : 0
             }}
+            aria-label={isFavorite ? t('pokemon.removeFromFavorites') : t('pokemon.addToFavorites')}
+            title={isFavorite ? t('pokemon.removeFromFavorites') : t('pokemon.addToFavorites')}
           >
             <Heart
               size={18}

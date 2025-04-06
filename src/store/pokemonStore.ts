@@ -1,15 +1,25 @@
 import { create } from 'zustand';
-import { Pokemon, PokemonListResponse } from '../types/pokemon';
-import { getPokemonByName, getPokemonList } from '../services/api';
+import { getAllPokemon, getPokemonByName, getPokemonList, getPokemonSpecies, getEvolutionChain } from '../services/api';
+import { Pokemon, PokemonListResponse, PokemonSpecies, EvolutionChain } from '../types/pokemon';
+
+// Extended interface for PokemonListResponse that includes allPokemon
+interface ExtendedPokemonListResponse extends PokemonListResponse {
+  allPokemon?: Pokemon[];
+}
 
 interface PokemonState {
-  pokemonList: PokemonListResponse | null;
+  pokemonList: ExtendedPokemonListResponse | null;
   selectedPokemon: Pokemon | null;
-  favorites: number[];
   isLoading: boolean;
+  isLoadingExtra: boolean;
   error: string | null;
-  fetchPokemonList: (limit?: number, offset?: number) => Promise<void>;
-  fetchPokemonDetails: (nameOrId: string | number) => Promise<void>;
+  favorites: number[];
+  species: PokemonSpecies | null;
+  evolutionChain: EvolutionChain | null;
+  fetchPokemonList: (limit: number, offset: number) => Promise<void>;
+  fetchPokemonDetails: (name: string) => Promise<void>;
+  fetchAllPokemon: () => Promise<void>;
+  fetchSpeciesAndEvolutionChain: (id: number) => Promise<void>;
   addToFavorites: (id: number) => void;
   removeFromFavorites: (id: number) => void;
 }
@@ -17,45 +27,90 @@ interface PokemonState {
 export const usePokemonStore = create<PokemonState>((set, get) => ({
   pokemonList: null,
   selectedPokemon: null,
-  favorites: JSON.parse(localStorage.getItem('pokemonFavorites') || '[]'),
   isLoading: false,
+  isLoadingExtra: false,
   error: null,
+  species: null,
+  evolutionChain: null,
+  favorites: JSON.parse(localStorage.getItem('pokemonFavorites') || '[]'),
 
-  fetchPokemonList: async (limit = 20, offset = 0) => {
+  fetchPokemonList: async (limit: number, offset: number) => {
     set({ isLoading: true, error: null });
     try {
       const data = await getPokemonList(limit, offset);
       set({ pokemonList: data, isLoading: false });
     } catch (error) {
-      console.error('Error fetching Pokemon list:', error);
       set({ error: 'Failed to fetch Pokemon list', isLoading: false });
+      console.error('Error fetching Pokemon list:', error);
     }
   },
 
-  fetchPokemonDetails: async (nameOrId) => {
+  fetchPokemonDetails: async (name: string) => {
     set({ isLoading: true, error: null });
     try {
-      const data = await getPokemonByName(nameOrId.toString());
+      const data = await getPokemonByName(name);
       set({ selectedPokemon: data, isLoading: false });
     } catch (error) {
-      console.error('Error fetching Pokemon details:', error);
       set({ error: 'Failed to fetch Pokemon details', isLoading: false });
+      console.error('Error fetching Pokemon details:', error);
     }
   },
 
-  addToFavorites: (id) => {
-    const currentFavorites = get().favorites;
-    if (!currentFavorites.includes(id)) {
-      const newFavorites = [...currentFavorites, id];
+  fetchAllPokemon: async () => {
+    const { pokemonList } = get();
+
+    // Return early if we already have all Pokemon
+    if (pokemonList?.allPokemon) {
+      return;
+    }
+
+    set({ isLoading: true, error: null });
+    try {
+      const allPokemon = await getAllPokemon();
+      set((state) => ({
+        pokemonList: {
+          ...state.pokemonList as ExtendedPokemonListResponse,
+          allPokemon
+        },
+        isLoading: false
+      }));
+    } catch (error) {
+      set({ error: 'Failed to fetch all Pokemon', isLoading: false });
+      console.error('Error fetching all Pokemon:', error);
+    }
+  },
+
+  fetchSpeciesAndEvolutionChain: async (id: number) => {
+    set({ isLoadingExtra: true, error: null });
+    try {
+      const speciesData = await getPokemonSpecies(id);
+      set({ species: speciesData });
+
+      if (speciesData.evolution_chain?.url) {
+        const evolutionData = await getEvolutionChain(speciesData.evolution_chain.url);
+        set({ evolutionChain: evolutionData });
+      }
+    } catch (error) {
+      set({ error: 'Failed to fetch evolution data', isLoadingExtra: false });
+      console.error('Error fetching evolution data:', error);
+    } finally {
+      set({ isLoadingExtra: false });
+    }
+  },
+
+  addToFavorites: (id: number) => {
+    set(state => {
+      const newFavorites = [...state.favorites, id];
       localStorage.setItem('pokemonFavorites', JSON.stringify(newFavorites));
-      set({ favorites: newFavorites });
-    }
+      return { favorites: newFavorites };
+    });
   },
 
-  removeFromFavorites: (id) => {
-    const currentFavorites = get().favorites;
-    const newFavorites = currentFavorites.filter(favoriteId => favoriteId !== id);
-    localStorage.setItem('pokemonFavorites', JSON.stringify(newFavorites));
-    set({ favorites: newFavorites });
+  removeFromFavorites: (id: number) => {
+    set(state => {
+      const newFavorites = state.favorites.filter(favId => favId !== id);
+      localStorage.setItem('pokemonFavorites', JSON.stringify(newFavorites));
+      return { favorites: newFavorites };
+    });
   }
 }));

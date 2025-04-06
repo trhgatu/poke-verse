@@ -55,42 +55,70 @@ export interface PokemonSpecies {
 }
 
 export interface EvolutionChain {
-  chain: {
-    species: {
-      name: string;
-      url: string;
-    };
-    evolves_to: {
-      species: {
-        name: string;
-        url: string;
-      };
-      evolution_details: {
-        min_level: number;
-        trigger: {
-          name: string;
-        };
-        item?: {
-          name: string;
-        };
-      }[];
-      evolves_to: {
-        species: {
-          name: string;
-          url: string;
-        };
-        evolution_details: {
-          min_level: number;
-          trigger: {
-            name: string;
-          };
-          item?: {
-            name: string;
-          };
-        }[];
-      }[];
-    }[];
+  id: number;
+  baby_trigger_item: {
+    name: string;
+    url: string;
+  } | null;
+  chain: ChainLink;
+}
+
+export interface ChainLink {
+  is_baby: boolean;
+  species: {
+    name: string;
+    url: string;
   };
+  evolution_details: EvolutionDetail[] | null;
+  evolves_to: ChainLink[];
+}
+
+export interface EvolutionDetail {
+  item: {
+    name: string;
+    url: string;
+  } | null;
+  trigger: {
+    name: string;
+    url: string;
+  };
+  gender: number | null;
+  held_item: {
+    name: string;
+    url: string;
+  } | null;
+  known_move: {
+    name: string;
+    url: string;
+  } | null;
+  known_move_type: {
+    name: string;
+    url: string;
+  } | null;
+  location: {
+    name: string;
+    url: string;
+  } | null;
+  min_level: number | null;
+  min_happiness: number | null;
+  min_beauty: number | null;
+  min_affection: number | null;
+  needs_overworld_rain: boolean;
+  party_species: {
+    name: string;
+    url: string;
+  } | null;
+  party_type: {
+    name: string;
+    url: string;
+  } | null;
+  relative_physical_stats: number | null;
+  time_of_day: string;
+  trade_species: {
+    name: string;
+    url: string;
+  } | null;
+  turn_upside_down: boolean;
 }
 
 export interface PokemonListResponse {

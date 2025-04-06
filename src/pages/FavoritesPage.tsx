@@ -4,8 +4,10 @@ import { getPokemonById } from '../services/api';
 import { Pokemon } from '../types/pokemon';
 import { usePokemonStore } from '../store/pokemonStore';
 import { PokemonCard } from '../components/PokemonCard';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export const FavoritesPage: React.FC = () => {
+  const { t } = useLanguage();
   const { favorites } = usePokemonStore();
   const [favoritePokemon, setFavoritePokemon] = useState<Pokemon[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -59,7 +61,7 @@ export const FavoritesPage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          Your Favorite Pokémon
+          {t('favorites.title')}
         </motion.h1>
         <motion.p
           className="text-zinc-400 text-center mt-2"
@@ -67,7 +69,7 @@ export const FavoritesPage: React.FC = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.5 }}
         >
-          Manage your collection of favorite Pokémon
+          {t('favorites.description')}
         </motion.p>
       </div>
 
@@ -86,9 +88,9 @@ export const FavoritesPage: React.FC = () => {
         </motion.div>
       ) : (
         <div className="w-full min-h-[calc(100vh-350px)] flex flex-col items-center justify-center">
-          <h2 className="text-2xl font-bold text-white mb-4">No Favorites Yet</h2>
+          <h2 className="text-2xl font-bold text-white mb-4">{t('favorites.empty')}</h2>
           <p className="text-zinc-400 text-center max-w-md mb-6">
-            Explore Pokémon and click the heart icon to add them to your favorites.
+            {t('favorites.addSome')}
           </p>
         </div>
       )}
