@@ -89,12 +89,14 @@ export const EvolutionChain: React.FC<EvolutionChainProps> = ({ chain }) => {
   }, []);
 
   useEffect(() => {
+    // Reset mega forms và toggle state ngay khi component khởi tạo hoặc chain thay đổi
     if (isMountedRef.current) {
       setMegaForms([]);
       setShowMegaForms(false);
       setEvolutionData([]);
     }
 
+    // Cleanup function cho component unmount
     return () => {
       if (isMountedRef.current) {
         setMegaForms([]);
@@ -103,17 +105,20 @@ export const EvolutionChain: React.FC<EvolutionChainProps> = ({ chain }) => {
         setIsLoading(true);
       }
     };
-  }, [chain]);
+  }, [chain]); // Chỉ phụ thuộc vào chain thay đổi
 
   useEffect(() => {
     const fetchEvolutionData = async () => {
       if (isMountedRef.current) setIsLoading(true);
       try {
+        // Process the chain recursively to build a flat list of all evolutions
         const evolutionList: PokemonWithEvolution[] = [];
         const processChain = async (chainLink: ChainLink, previousDetails: EvolutionDetail | null = null) => {
+          // Fetch the Pokemon data for this link
           try {
             const pokemonData = await getPokemonByName(chainLink.species.name);
 
+            // Add evolution details if this isn't the base form
             const evolutionDetails = previousDetails ? {
               trigger: previousDetails.trigger.name,
               minLevel: previousDetails.min_level,
@@ -122,29 +127,36 @@ export const EvolutionChain: React.FC<EvolutionChainProps> = ({ chain }) => {
               otherCondition: getOtherCondition(previousDetails)
             } : undefined;
 
+            // Add to our evolution list
             evolutionList.push({
               ...pokemonData,
               evolutionDetails
             });
 
+            // Process each evolution of this Pokemon
             for (const evolution of chainLink.evolves_to) {
               await processChain(evolution, evolution.evolution_details?.[0] || null);
             }
           } catch (error) {
             console.error(`Error fetching Pokemon ${chainLink.species.name}:`, error);
+            // Continue processing other evolutions even if one fails
           }
         };
 
+        // Start with the first Pokémon in the chain
         if (chain && chain.species && chain.species.name) {
           await processChain(chain);
           if (evolutionList.length > 0 && isMountedRef.current) {
             setEvolutionData(evolutionList);
 
+            // Generate a key to check if this Pokemon's chain has changed
             const chainKey = evolutionList.map(p => p.name).join('-');
             console.log('Current chain key:', chainKey);
 
+            // Only fetch mega forms for the final evolution
             const finalPokemon = evolutionList[evolutionList.length - 1];
 
+            // Reset mega forms if the final Pokemon has changed
             if (lastFinalPokemonId !== finalPokemon.id && isMountedRef.current) {
               setMegaForms([]);
               setLastFinalPokemonId(finalPokemon.id);
@@ -155,6 +167,7 @@ export const EvolutionChain: React.FC<EvolutionChainProps> = ({ chain }) => {
                 const megaFormNames = POKEMON_WITH_MEGA[finalPokemon.name];
                 const megaFormsList: PokemonWithEvolution[] = [];
 
+                // Fetch data for each mega form
                 for (const megaName of megaFormNames) {
                   try {
                     const megaData = await getPokemonByName(megaName);
@@ -204,6 +217,7 @@ export const EvolutionChain: React.FC<EvolutionChainProps> = ({ chain }) => {
     fetchEvolutionData();
   }, [chain, chain?.species?.name, lastFinalPokemonId]);
 
+  // Helper function to extract other evolution conditions
   const getOtherCondition = (details: EvolutionDetail): string | null => {
     if (!details) return null;
 
@@ -215,6 +229,7 @@ export const EvolutionChain: React.FC<EvolutionChainProps> = ({ chain }) => {
     return null;
   };
 
+  // Helper to format the evolution requirements for display
   const getEvolutionRequirement = (evolution: PokemonWithEvolution) => {
     if (!evolution.evolutionDetails) return null;
 
@@ -237,7 +252,9 @@ export const EvolutionChain: React.FC<EvolutionChainProps> = ({ chain }) => {
   };
 
   const handlePokemonClick = (pokemonName: string) => {
+    // Điều hướng đến trang chi tiết của Pokémon
     navigate(`/pokemon/${pokemonName}`);
+    // Cuộn lên đầu trang
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -245,8 +262,10 @@ export const EvolutionChain: React.FC<EvolutionChainProps> = ({ chain }) => {
     return (
       <div className="flex flex-col">
         <div className="flex flex-wrap justify-center items-center gap-2 md:gap-4">
+          {/* Simulating a 3-stage evolution chain skeleton */}
           {[...Array(3)].map((_, index) => (
             <React.Fragment key={index}>
+              {/* Add arrow between skeleton stages */}
               {index > 0 && (
                 <div className="flex flex-col items-center mx-2">
                   <ArrowRight className="text-zinc-500" />
@@ -256,6 +275,7 @@ export const EvolutionChain: React.FC<EvolutionChainProps> = ({ chain }) => {
                 </div>
               )}
 
+              {/* Pokemon card skeleton */}
               <div className="bg-zinc-700 p-4 rounded-xl">
                 <div className="w-24 h-24 bg-zinc-800 rounded-full p-2 flex items-center justify-center mb-2 relative">
                   <div className="w-16 h-16 bg-zinc-700 rounded-full animate-pulse"></div>
@@ -280,6 +300,7 @@ export const EvolutionChain: React.FC<EvolutionChainProps> = ({ chain }) => {
       <div className="flex flex-wrap justify-center items-center gap-2 md:gap-4">
         {evolutionData.map((pokemon, index) => (
           <React.Fragment key={pokemon.id}>
+            {/* Add arrow between evolution stages */}
             {index > 0 && (
               <div className="flex flex-col items-center mx-2">
                 <ArrowRight className="text-zinc-500" />
@@ -291,6 +312,7 @@ export const EvolutionChain: React.FC<EvolutionChainProps> = ({ chain }) => {
               </div>
             )}
 
+            {/* Pokemon card */}
             <motion.div
               className="bg-zinc-700 p-4 rounded-xl cursor-pointer hover:bg-zinc-600 transition-colors"
               onClick={() => handlePokemonClick(pokemon.name)}
@@ -315,6 +337,7 @@ export const EvolutionChain: React.FC<EvolutionChainProps> = ({ chain }) => {
         ))}
       </div>
 
+      {/* Mega Evolution section */}
       {megaForms.length > 0 && (
         <div className="mt-8">
           <div className="flex justify-center mb-4">

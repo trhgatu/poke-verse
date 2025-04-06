@@ -7,6 +7,7 @@ export interface Translations {
 }
 
 export const translations: Translations = {
+  // Navigation
   'nav.regions': {
     en: 'Regions',
     vi: 'Vùng'
@@ -24,6 +25,7 @@ export const translations: Translations = {
     vi: 'Tất cả Pokémon'
   },
 
+  // Evolution Simulator
   'evolution.title': {
     en: 'Pokémon Evolution Simulator',
     vi: 'Mô phỏng tiến hóa Pokémon'
@@ -129,6 +131,7 @@ export const translations: Translations = {
     vi: 'Ẩn hình thức Mega Tiến hóa'
   },
 
+  // Home Page
   'home.title': {
     en: 'Explore the World of Pokémon',
     vi: 'Khám phá thế giới Pokémon'
@@ -186,6 +189,7 @@ export const translations: Translations = {
     vi: 'Xóa bộ lọc'
   },
 
+  // Pokemon Details
   'pokemon.stats': {
     en: 'Stats',
     vi: 'Chỉ số'
@@ -235,6 +239,7 @@ export const translations: Translations = {
     vi: 'Xóa khỏi yêu thích'
   },
 
+  // Favorites
   'favorites.title': {
     en: 'Favorite Pokémon',
     vi: 'Pokémon yêu thích'
@@ -256,6 +261,7 @@ export const translations: Translations = {
     vi: 'Duyệt Pokémon'
   },
 
+  // Regions
   'regions.title': {
     en: 'Pokémon Regions',
     vi: 'Vùng Pokémon'
@@ -313,67 +319,69 @@ export const translations: Translations = {
     vi: 'Không tìm thấy địa điểm nào trong vùng này.'
   },
 
-  'locations.areas': {
+  // Locations
+  'location.areas': {
     en: 'Area',
     vi: 'Khu vực'
   },
-  'locations.areaPlural': {
+  'location.areaPlural': {
     en: 'Areas',
     vi: 'Khu vực'
   },
-  'locations.viewDetails': {
+  'location.viewDetails': {
     en: 'View Details',
     vi: 'Xem chi tiết'
   },
-  'locations.loading': {
+  'location.loading': {
     en: 'Loading location details...',
     vi: 'Đang tải thông tin địa điểm...'
   },
-  'locations.description': {
+  'location.description': {
     en: '${name} is a location in the ${region} region. It features various areas where Pokémon can be encountered.',
     vi: '${name} là một địa điểm ở vùng ${region}. Nó có các khu vực khác nhau nơi có thể gặp Pokémon.'
   },
-  'locations.encounters': {
+  'location.encounters': {
     en: 'Pokémon Encounters in ${name}',
     vi: 'Gặp gỡ Pokémon ở ${name}'
   },
-  'locations.searchPokemon': {
+  'location.searchPokemon': {
     en: 'Search Pokémon...',
     vi: 'Tìm Pokémon...'
   },
-  'locations.noPokemonFound': {
+  'location.noPokemonFound': {
     en: 'No Pokémon found matching "${term}"',
     vi: 'Không tìm thấy Pokémon nào khớp với "${term}"'
   },
-  'locations.version': {
+  'location.version': {
     en: 'Version',
     vi: 'Phiên bản'
   },
-  'locations.level': {
+  'location.level': {
     en: 'Level',
     vi: 'Cấp độ'
   },
-  'locations.chance': {
+  'location.chance': {
     en: 'Chance',
     vi: 'Tỷ lệ'
   },
-  'locations.method': {
+  'location.method': {
     en: 'Method',
     vi: 'Phương pháp'
   },
-  'locations.encounterDetails': {
+  'location.encounterDetails': {
     en: 'Encounter Details',
     vi: 'Chi tiết gặp gỡ'
   },
-  'locations.noEncounters': {
+  'location.noEncounters': {
     en: 'No Encounters Found',
     vi: 'Không tìm thấy gặp gỡ nào'
   },
-  'locations.noEncountersDescription': {
+  'location.noEncountersDescription': {
     en: 'No Pokémon encounters are recorded for this location area.',
     vi: 'Không có ghi nhận gặp gỡ Pokémon nào trong khu vực địa điểm này.'
   },
 
+  // Common UI
   'ui.loading': {
     en: 'Loading...',
     vi: 'Đang tải...'
@@ -419,6 +427,7 @@ export const translations: Translations = {
     vi: 'Đã đăng ký bản quyền.'
   },
 
+  // Language Switcher
   'language.en': {
     en: 'English',
     vi: 'Tiếng Anh'
@@ -432,6 +441,7 @@ export const translations: Translations = {
     vi: 'Đổi ngôn ngữ'
   },
 
+  // Error messages
   'error.loading': {
     en: 'Error Loading Pokémon',
     vi: 'Lỗi Khi Tải Pokémon'
