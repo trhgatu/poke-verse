@@ -316,22 +316,12 @@ export const PokemonDetailsPage: React.FC = () => {
               {/* Pokeball backdrop design */}
               <div className="absolute -inset-8 bg-pokeball-detail bg-no-repeat bg-center bg-contain opacity-60 animate-spin-slow"></div>
 
-              {/* Circle behind Pokemon */}
-              <div className="absolute inset-0 rounded-full bg-white/20 backdrop-blur-sm overflow-hidden">
-                {/* Pokeball design inside circle */}
-                <div className="absolute inset-0 w-full h-full">
-                  <div className="absolute top-0 left-0 right-0 h-1/2 bg-white/15"></div>
-                  <div className="absolute top-[calc(50%-1px)] left-0 right-0 h-2 bg-white/30"></div>
-                  <div className="absolute top-[calc(50%-12px)] left-[calc(50%-12px)] w-24 h-24 rounded-full bg-white/30 transform -translate-x-1/2 -translate-y-1/2"></div>
-                  <div className="absolute top-[calc(50%-8px)] left-[calc(50%-8px)] w-16 h-16 rounded-full bg-white/20 transform -translate-x-1/2 -translate-y-1/2"></div>
-                </div>
-              </div>
 
               <motion.div
                 initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
                 animate={{ opacity: 1, scale: 1, rotate: 0 }}
                 transition={{ duration: 0.5, type: "spring" }}
-                className="relative z-10"
+                className="relative z-10 flex justify-center"
               >
                 <motion.img
                   src={selectedPokemon.sprites.other["official-artwork"].front_default || selectedPokemon.sprites.front_default}
