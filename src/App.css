@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+/* Custom effects for Pokemon images */
+.pokemon-image-container {
+  transition: all 0.3s ease;
+}
+
+.pokemon-image-container:hover img {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+}
+
+/* Button hover effects */
+.custom-button {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.custom-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.custom-button:hover::after {
+  transform: translateX(0);
+}
