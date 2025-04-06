@@ -110,6 +110,26 @@ export const translations: Translations = {
     en: 'This Pokémon has reached its final evolution stage',
     vi: 'Pokémon này đã đạt đến giai đoạn tiến hóa cuối cùng'
   },
+  'evolution.noEvolutionDesc': {
+    en: 'This Pokémon does not evolve to or from any other Pokémon',
+    vi: 'Pokémon này không tiến hóa từ hoặc thành Pokémon khác'
+  },
+  'evolution.megaEvolution': {
+    en: 'Mega Evolution',
+    vi: 'Mega Tiến hóa'
+  },
+  'evolution.megaEvolutionDesc': {
+    en: 'These forms require a Mega Stone and can only be activated during battle',
+    vi: 'Các hình thức này yêu cầu Mega Stone và chỉ có thể kích hoạt trong trận đấu'
+  },
+  'evolution.showMega': {
+    en: 'Show Mega Evolution Forms',
+    vi: 'Hiển thị hình thức Mega Tiến hóa'
+  },
+  'evolution.hideMega': {
+    en: 'Hide Mega Evolution Forms',
+    vi: 'Ẩn hình thức Mega Tiến hóa'
+  },
 
   // Home Page
   'home.title': {
@@ -127,6 +147,18 @@ export const translations: Translations = {
   'home.search.button': {
     en: 'Search',
     vi: 'Tìm kiếm'
+  },
+  'home.search.found': {
+    en: 'found',
+    vi: 'được tìm thấy'
+  },
+  'home.search.noResults': {
+    en: 'No Pokémon match your search',
+    vi: 'Không có Pokémon nào phù hợp với tìm kiếm của bạn'
+  },
+  'home.search.filterDisabled': {
+    en: 'Type filters are disabled during search',
+    vi: 'Bộ lọc loại bị vô hiệu hóa trong khi tìm kiếm'
   },
   'home.filter.all': {
     en: 'All Types',
@@ -407,5 +439,15 @@ export const translations: Translations = {
   'language.switch': {
     en: 'Switch language',
     vi: 'Đổi ngôn ngữ'
+  },
+
+  // Error messages
+  'error.loading': {
+    en: 'Error Loading Pokémon',
+    vi: 'Lỗi Khi Tải Pokémon'
+  },
+  'error.tryAgain': {
+    en: 'Try Again',
+    vi: 'Thử Lại'
   }
 };

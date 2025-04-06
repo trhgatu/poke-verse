@@ -53,10 +53,10 @@ export const searchPokemonByName = async (searchTerm: string): Promise<Pokemon[]
 // Fetch all Pokemon (used for filtering by type)
 export const getAllPokemon = async (): Promise<Pokemon[]> => {
   try {
-    // Lấy số lượng Pokemon có giới hạn thay vì toàn bộ
-    const limit = 151; // Giới hạn ở 151 Pokemon đầu tiên (Gen 1)
+    // Lấy tất cả Pokémon thay vì chỉ Gen 1
+    const limit = 1302; // Tăng lên để bao gồm tất cả Pokémon có sẵn
 
-    // Lấy danh sách Pokemon với giới hạn
+    // Lấy danh sách Pokemon với giới hạn mới
     const response = await axios.get(`${BASE_URL}/pokemon?limit=${limit}`);
     const results = response.data.results;
 

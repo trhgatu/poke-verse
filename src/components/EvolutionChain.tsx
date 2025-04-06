@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
@@ -21,15 +21,95 @@ interface PokemonWithEvolution extends Pokemon {
   };
 }
 
+// List of Pokémon that have Mega Evolutions
+const POKEMON_WITH_MEGA: Record<string, string[]> = {
+  'venusaur': ['venusaur-mega'],
+  'charizard': ['charizard-mega-x', 'charizard-mega-y'],
+  'blastoise': ['blastoise-mega'],
+  'alakazam': ['alakazam-mega'],
+  'gengar': ['gengar-mega'],
+  'kangaskhan': ['kangaskhan-mega'],
+  'pinsir': ['pinsir-mega'],
+  'gyarados': ['gyarados-mega'],
+  'aerodactyl': ['aerodactyl-mega'],
+  'mewtwo': ['mewtwo-mega-x', 'mewtwo-mega-y'],
+  'ampharos': ['ampharos-mega'],
+  'scizor': ['scizor-mega'],
+  'heracross': ['heracross-mega'],
+  'houndoom': ['houndoom-mega'],
+  'tyranitar': ['tyranitar-mega'],
+  'blaziken': ['blaziken-mega'],
+  'gardevoir': ['gardevoir-mega'],
+  'mawile': ['mawile-mega'],
+  'aggron': ['aggron-mega'],
+  'medicham': ['medicham-mega'],
+  'manectric': ['manectric-mega'],
+  'banette': ['banette-mega'],
+  'absol': ['absol-mega'],
+  'garchomp': ['garchomp-mega'],
+  'lucario': ['lucario-mega'],
+  'abomasnow': ['abomasnow-mega'],
+  'beedrill': ['beedrill-mega'],
+  'pidgeot': ['pidgeot-mega'],
+  'slowbro': ['slowbro-mega'],
+  'steelix': ['steelix-mega'],
+  'sceptile': ['sceptile-mega'],
+  'swampert': ['swampert-mega'],
+  'sableye': ['sableye-mega'],
+  'sharpedo': ['sharpedo-mega'],
+  'camerupt': ['camerupt-mega'],
+  'altaria': ['altaria-mega'],
+  'glalie': ['glalie-mega'],
+  'salamence': ['salamence-mega'],
+  'metagross': ['metagross-mega'],
+  'latias': ['latias-mega'],
+  'latios': ['latios-mega'],
+  'rayquaza': ['rayquaza-mega'],
+  'lopunny': ['lopunny-mega'],
+  'gallade': ['gallade-mega'],
+  'audino': ['audino-mega'],
+  'diancie': ['diancie-mega']
+};
+
 export const EvolutionChain: React.FC<EvolutionChainProps> = ({ chain }) => {
   const { t } = useLanguage();
   const [evolutionData, setEvolutionData] = useState<PokemonWithEvolution[]>([]);
+  const [megaForms, setMegaForms] = useState<PokemonWithEvolution[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showMegaForms, setShowMegaForms] = useState(false);
+  const [lastFinalPokemonId, setLastFinalPokemonId] = useState<number | null>(null);
+  const isMountedRef = useRef(true);
   const navigate = useNavigate();
 
   useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    // Reset mega forms và toggle state ngay khi component khởi tạo hoặc chain thay đổi
+    if (isMountedRef.current) {
+      setMegaForms([]);
+      setShowMegaForms(false);
+      setEvolutionData([]);
+    }
+
+    // Cleanup function cho component unmount
+    return () => {
+      if (isMountedRef.current) {
+        setMegaForms([]);
+        setShowMegaForms(false);
+        setEvolutionData([]);
+        setIsLoading(true);
+      }
+    };
+  }, [chain]); // Chỉ phụ thuộc vào chain thay đổi
+
+  useEffect(() => {
     const fetchEvolutionData = async () => {
-      setIsLoading(true);
+      if (isMountedRef.current) setIsLoading(true);
       try {
         // Process the chain recursively to build a flat list of all evolutions
         const evolutionList: PokemonWithEvolution[] = [];
@@ -59,20 +139,83 @@ export const EvolutionChain: React.FC<EvolutionChainProps> = ({ chain }) => {
             }
           } catch (error) {
             console.error(`Error fetching Pokemon ${chainLink.species.name}:`, error);
+            // Continue processing other evolutions even if one fails
           }
         };
 
-        await processChain(chain);
-        setEvolutionData(evolutionList);
+        // Start with the first Pokémon in the chain
+        if (chain && chain.species && chain.species.name) {
+          await processChain(chain);
+          if (evolutionList.length > 0 && isMountedRef.current) {
+            setEvolutionData(evolutionList);
+
+            // Generate a key to check if this Pokemon's chain has changed
+            const chainKey = evolutionList.map(p => p.name).join('-');
+            console.log('Current chain key:', chainKey);
+
+            // Only fetch mega forms for the final evolution
+            const finalPokemon = evolutionList[evolutionList.length - 1];
+
+            // Reset mega forms if the final Pokemon has changed
+            if (lastFinalPokemonId !== finalPokemon.id && isMountedRef.current) {
+              setMegaForms([]);
+              setLastFinalPokemonId(finalPokemon.id);
+            }
+
+            if (finalPokemon && POKEMON_WITH_MEGA[finalPokemon.name]) {
+              try {
+                const megaFormNames = POKEMON_WITH_MEGA[finalPokemon.name];
+                const megaFormsList: PokemonWithEvolution[] = [];
+
+                // Fetch data for each mega form
+                for (const megaName of megaFormNames) {
+                  try {
+                    const megaData = await getPokemonByName(megaName);
+                    megaFormsList.push({
+                      ...megaData,
+                      evolutionDetails: {
+                        trigger: 'mega-evolution',
+                        otherCondition: 'Mega Stone'
+                      }
+                    });
+                  } catch (megaError) {
+                    console.error(`Error fetching Mega Pokemon ${megaName}:`, megaError);
+                  }
+                }
+
+                if (megaFormsList.length > 0 && isMountedRef.current) {
+                  setMegaForms(megaFormsList);
+                } else if (isMountedRef.current) {
+                  setMegaForms([]);
+                }
+              } catch (megaSearchError) {
+                console.error('Error searching for mega forms:', megaSearchError);
+                if (isMountedRef.current) setMegaForms([]);
+              }
+            } else if (isMountedRef.current) {
+              setMegaForms([]);
+            }
+          } else {
+            console.error('No valid Pokémon found in evolution chain');
+            if (isMountedRef.current) setMegaForms([]);
+          }
+        } else {
+          console.error('Invalid evolution chain structure:', chain);
+          if (isMountedRef.current) setMegaForms([]);
+        }
       } catch (error) {
         console.error('Error processing evolution chain:', error);
+        if (isMountedRef.current) {
+          setEvolutionData([]);
+          setMegaForms([]);
+        }
       } finally {
-        setIsLoading(false);
+        if (isMountedRef.current) setIsLoading(false);
       }
     };
 
     fetchEvolutionData();
-  }, [chain]);
+  }, [chain, chain?.species?.name, lastFinalPokemonId]);
 
   // Helper function to extract other evolution conditions
   const getOtherCondition = (details: EvolutionDetail): string | null => {
@@ -101,6 +244,8 @@ export const EvolutionChain: React.FC<EvolutionChainProps> = ({ chain }) => {
         return item ? t('evolution.method.item', { item }) : t('evolution.method.default');
       case 'trade':
         return item ? `Trade with ${item}` : t('evolution.method.trade');
+      case 'mega-evolution':
+        return t('evolution.megaEvolution');
       default:
         return capitalizeFirstLetter(trigger.replace('-', ' '));
     }
@@ -191,6 +336,60 @@ export const EvolutionChain: React.FC<EvolutionChainProps> = ({ chain }) => {
           </React.Fragment>
         ))}
       </div>
+
+      {/* Mega Evolution section */}
+      {megaForms.length > 0 && (
+        <div className="mt-8">
+          <div className="flex justify-center mb-4">
+            <button
+              onClick={() => setShowMegaForms(!showMegaForms)}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors"
+            >
+              {showMegaForms ? t('evolution.hideMega') : t('evolution.showMega')}
+            </button>
+          </div>
+
+          {showMegaForms && (
+            <div className="flex flex-col items-center mt-4">
+              <div className="bg-gradient-to-r from-purple-900/50 to-pink-600/50 p-4 rounded-xl mb-6 w-full text-center">
+                <h4 className="text-white font-medium mb-2">{t('evolution.megaEvolution')}</h4>
+                <p className="text-zinc-300 text-sm">{t('evolution.megaEvolutionDesc')}</p>
+              </div>
+
+              <div className="flex flex-wrap justify-center items-center gap-6">
+                {megaForms.map((megaPokemon) => (
+                  <motion.div
+                    key={megaPokemon.id}
+                    className="bg-gradient-to-br from-purple-800 to-zinc-700 p-4 rounded-xl cursor-pointer hover:from-purple-700 hover:to-zinc-600 transition-colors"
+                    onClick={() => handlePokemonClick(megaPokemon.name)}
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  >
+                    <div className="relative">
+                      <div className="w-28 h-28 bg-zinc-800/50 rounded-full p-2 flex items-center justify-center mb-2">
+                        <img
+                          src={megaPokemon.sprites.other['official-artwork'].front_default || megaPokemon.sprites.front_default}
+                          alt={megaPokemon.name}
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <div className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs font-bold px-2 py-1 rounded-full">
+                        MEGA
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-white capitalize font-medium">
+                        {capitalizeFirstLetter(megaPokemon.name.replace(/-mega/g, '').replace(/-x|y/g, ' $&').toUpperCase())}
+                      </div>
+                      <div className="text-zinc-400 text-xs">#{megaPokemon.id}</div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

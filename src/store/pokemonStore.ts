@@ -112,17 +112,105 @@ export const usePokemonStore = create<PokemonState>((set, get) => ({
   },
 
   fetchSpeciesAndEvolutionChain: async (id: number) => {
-    set({ isLoadingExtra: true, error: null });
+    // Reset all related state before fetching new data
+    set({
+      isLoadingExtra: true,
+      error: null,
+      species: null,
+      evolutionChain: null
+    });
+
     try {
-      const speciesData = await getPokemonSpecies(id);
+      // First attempt: try to fetch species data directly
+      let speciesData;
+      try {
+        speciesData = await getPokemonSpecies(id);
+      } catch (speciesError) {
+        // If failed, this might be a special form
+        // Get the current selected Pokemon name
+        const currentPokemon = get().selectedPokemon;
+
+        if (currentPokemon) {
+          // Extract base form name by removing anything after a hyphen (e.g., "charizard-mega-x" -> "charizard")
+          const basePokemonName = currentPokemon.name.split('-')[0];
+
+          // Try to get the species data for the base form
+          try {
+            // Get the base Pokemon first to get its ID
+            const basePokemon = await getPokemonByName(basePokemonName);
+            speciesData = await getPokemonSpecies(basePokemon.id);
+          } catch {
+            throw new Error('Failed to fetch species data for both forms');
+          }
+        } else {
+          throw speciesError;
+        }
+      }
+
       set({ species: speciesData });
 
       if (speciesData.evolution_chain?.url) {
-        const evolutionData = await getEvolutionChain(speciesData.evolution_chain.url);
-        set({ evolutionChain: evolutionData });
+        try {
+          const evolutionData = await getEvolutionChain(speciesData.evolution_chain.url);
+          set({ evolutionChain: evolutionData, isLoadingExtra: false });
+        } catch (evolutionError) {
+          console.error('Error fetching evolution chain:', evolutionError);
+          // If evolution chain fetch fails, still set a default chain object
+          set({
+            evolutionChain: {
+              id: 0,
+              baby_trigger_item: null,
+              chain: {
+                is_baby: false,
+                species: {
+                  name: '',
+                  url: ''
+                },
+                evolution_details: null,
+                evolves_to: []
+              }
+            },
+            isLoadingExtra: false
+          });
+        }
+      } else {
+        // If no evolution chain URL, set evolutionChain to empty structure
+        set({
+          evolutionChain: {
+            id: 0,
+            baby_trigger_item: null,
+            chain: {
+              is_baby: false,
+              species: {
+                name: '',
+                url: ''
+              },
+              evolution_details: null,
+              evolves_to: []
+            }
+          },
+          isLoadingExtra: false
+        });
       }
     } catch (error) {
-      set({ error: 'Failed to fetch evolution data', isLoadingExtra: false });
+      set({
+        error: 'Failed to fetch evolution data',
+        isLoadingExtra: false,
+        // Set empty default values even in error case
+        evolutionChain: {
+          id: 0,
+          baby_trigger_item: null,
+          chain: {
+            is_baby: false,
+            species: {
+              name: '',
+              url: ''
+            },
+            evolution_details: null,
+            evolves_to: []
+          }
+        }
+      });
       console.error('Error fetching evolution data:', error);
     } finally {
       set({ isLoadingExtra: false });

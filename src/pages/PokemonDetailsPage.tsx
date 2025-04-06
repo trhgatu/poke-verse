@@ -41,6 +41,7 @@ export const PokemonDetailsPage: React.FC = () => {
   useEffect(() => {
     if (name) {
       fetchPokemonDetails(name);
+      setActiveTab('stats'); // Reset to stats tab when changing Pokemon
     }
   }, [name, fetchPokemonDetails]);
 
@@ -49,6 +50,14 @@ export const PokemonDetailsPage: React.FC = () => {
       fetchSpeciesAndEvolutionChain(selectedPokemon.id);
     }
   }, [selectedPokemon, fetchSpeciesAndEvolutionChain]);
+
+  // Reset error when component unmounts
+  useEffect(() => {
+    return () => {
+      // Reset error state when navigating away
+      usePokemonStore.setState({ error: null });
+    };
+  }, []);
 
   // Fetch all Pokemon data to enable navigation if not already loaded
   useEffect(() => {
@@ -606,8 +615,31 @@ export const PokemonDetailsPage: React.FC = () => {
                 <div className="flex justify-center py-10">
                   <div className="w-12 h-12 border-4 border-zinc-600 border-t-red-500 rounded-full animate-spin"></div>
                 </div>
+              ) : error ? (
+                <div className="text-zinc-400 text-center py-8 bg-black/20 rounded-xl border border-zinc-700/50">
+                  <p className="text-lg font-medium text-red-400">{t('error.loading')}</p>
+                  <p className="text-sm mt-2 text-zinc-500">{error}</p>
+                  <button
+                    onClick={() => {
+                      fetchSpeciesAndEvolutionChain(selectedPokemon.id);
+                    }}
+                    className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                  >
+                    {t('error.tryAgain')}
+                  </button>
+                </div>
               ) : evolutionChain ? (
-                <EvolutionChainComponent chain={evolutionChain.chain} />
+                evolutionChain.chain && evolutionChain.chain.evolves_to && evolutionChain.chain.evolves_to.length > 0 ? (
+                  <EvolutionChainComponent
+                    key={`evolution-chain-${selectedPokemon.id}-${selectedPokemon.name}`}
+                    chain={evolutionChain.chain}
+                  />
+                ) : (
+                  <div className="text-zinc-400 text-center py-8 bg-black/20 rounded-xl border border-zinc-700/50">
+                    <p className="text-lg font-medium">{t('evolution.noEvolution')}</p>
+                    <p className="text-sm mt-2 text-zinc-500">{t('evolution.noEvolutionDesc')}</p>
+                  </div>
+                )
               ) : (
                 <div className="text-zinc-400 text-center py-8 bg-black/20 rounded-xl border border-zinc-700/50">
                   <p className="text-lg font-medium">{t('evolution.noEvolution')}</p>
