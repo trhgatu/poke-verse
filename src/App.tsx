@@ -8,6 +8,7 @@ import { RegionDetailPage } from './pages/RegionDetailPage';
 import { LocationDetailPage } from './pages/LocationDetailPage';
 import { EvolutionSimulatorPage } from './pages/EvolutionSimulatorPage';
 import './App.css';
+import './assets/pokemon-colors.css';
 
 function App() {
   return (

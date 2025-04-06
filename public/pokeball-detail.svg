@@ -1,0 +1,40 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer circle -->
+  <circle cx="100" cy="100" r="98" fill="none" stroke="white" stroke-width="4" stroke-opacity="0.4"/>
+
+  <!-- Top half red part -->
+  <path d="M100 0C44.8 0 0 44.8 0 100H200C200 44.8 155.2 0 100 0Z" fill="white" fill-opacity="0.3"/>
+
+  <!-- Bottom half white part -->
+  <path d="M0 100C0 155.2 44.8 200 100 200C155.2 200 200 155.2 200 100H0Z" fill="white" fill-opacity="0.2"/>
+
+  <!-- Middle line -->
+  <rect x="0" y="98" width="200" height="4" fill="white" fill-opacity="0.5"/>
+
+  <!-- Center circle border -->
+  <circle cx="100" cy="100" r="30" fill="none" stroke="white" stroke-width="4" stroke-opacity="0.6"/>
+
+  <!-- Center circle background -->
+  <circle cx="100" cy="100" r="25" fill="white" fill-opacity="0.3"/>
+
+  <!-- Center circle inner -->
+  <circle cx="100" cy="100" r="15" fill="white" fill-opacity="0.5"/>
+
+  <!-- Decorative rays -->
+  <line x1="100" y1="35" x2="100" y2="65" stroke="white" stroke-opacity="0.3" stroke-width="2"/>
+  <line x1="100" y1="135" x2="100" y2="165" stroke="white" stroke-opacity="0.3" stroke-width="2"/>
+  <line x1="35" y1="100" x2="65" y2="100" stroke="white" stroke-opacity="0.3" stroke-width="2"/>
+  <line x1="135" y1="100" x2="165" y2="100" stroke="white" stroke-opacity="0.3" stroke-width="2"/>
+
+  <!-- Diagonal rays -->
+  <line x1="55" y1="55" x2="75" y2="75" stroke="white" stroke-opacity="0.3" stroke-width="2"/>
+  <line x1="125" y1="125" x2="145" y2="145" stroke="white" stroke-opacity="0.3" stroke-width="2"/>
+  <line x1="55" y1="145" x2="75" y2="125" stroke="white" stroke-opacity="0.3" stroke-width="2"/>
+  <line x1="125" y1="75" x2="145" y2="55" stroke="white" stroke-opacity="0.3" stroke-width="2"/>
+
+  <!-- Sparkles -->
+  <circle cx="30" cy="50" r="2" fill="white" fill-opacity="0.7"/>
+  <circle cx="170" cy="50" r="2" fill="white" fill-opacity="0.7"/>
+  <circle cx="30" cy="150" r="2" fill="white" fill-opacity="0.7"/>
+  <circle cx="170" cy="150" r="2" fill="white" fill-opacity="0.7"/>
+</svg>

@@ -6,7 +6,7 @@ import { LanguageProvider } from './contexts/LanguageContext'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <LanguageProvider>
-      <App />
+    <App />
     </LanguageProvider>
   </StrictMode>,
 )

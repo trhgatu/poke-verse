@@ -22,25 +22,64 @@ export const getPokemonById = async (id: number): Promise<Pokemon> => {
   return response.data;
 };
 
+// Tối ưu: Tìm Pokemon bằng tên - dùng cho chức năng tìm kiếm
+export const searchPokemonByName = async (searchTerm: string): Promise<Pokemon[]> => {
+  try {
+    // Lấy danh sách 151 Pokemon đầu tiên (Gen 1) - đủ để tìm kiếm cơ bản
+    const limit = 1302;
+    const response = await axios.get(`${BASE_URL}/pokemon?limit=${limit}`);
+    const results = response.data.results;
+
+    // Lọc các Pokemon khớp với từ khóa tìm kiếm
+    const filteredResults = results.filter((pokemon: { name: string }) =>
+      pokemon.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    // Chỉ lấy thông tin chi tiết của các Pokemon đã lọc (thay vì tất cả)
+    const detailedPokemon = await Promise.all(
+      filteredResults.map(async (pokemon: { name: string, url: string }) => {
+        const detailResponse = await axios.get(pokemon.url);
+        return detailResponse.data;
+      })
+    );
+
+    return detailedPokemon;
+  } catch (error) {
+    console.error('Error searching Pokemon:', error);
+    throw new Error('Failed to search Pokemon');
+  }
+};
+
 // Fetch all Pokemon (used for filtering by type)
 export const getAllPokemon = async (): Promise<Pokemon[]> => {
-  // First, get the total count
-  const initialResponse = await axios.get(`${BASE_URL}/pokemon?limit=1`);
-  const count = initialResponse.data.count;
+  try {
+    // Lấy số lượng Pokemon có giới hạn thay vì toàn bộ
+    const limit = 151; // Giới hạn ở 151 Pokemon đầu tiên (Gen 1)
 
-  // Then fetch all Pokemon in one request
-  const response = await axios.get(`${BASE_URL}/pokemon?limit=${count}`);
-  const results = response.data.results;
+    // Lấy danh sách Pokemon với giới hạn
+    const response = await axios.get(`${BASE_URL}/pokemon?limit=${limit}`);
+    const results = response.data.results;
 
-  // Fetch detailed information for each Pokemon
-  const detailedPokemon = await Promise.all(
-    results.map(async (pokemon: { name: string, url: string }) => {
-      const detailResponse = await axios.get(pokemon.url);
-      return detailResponse.data;
-    })
-  );
+    // Lấy thông tin chi tiết cho mỗi Pokemon
+    const detailedPokemon = await Promise.all(
+      results.map(async (pokemon: { name: string, url: string }) => {
+        try {
+          const detailResponse = await axios.get(pokemon.url);
+          return detailResponse.data;
+        } catch (err) {
+          console.error(`Error fetching details for ${pokemon.name}:`, err);
+          // Trả về null nếu không lấy được thông tin chi tiết
+          return null;
+        }
+      })
+    );
 
-  return detailedPokemon;
+    // Lọc bỏ các null values
+    return detailedPokemon.filter(pokemon => pokemon !== null);
+  } catch (error) {
+    console.error('Error fetching all Pokemon:', error);
+    throw new Error('Failed to fetch all Pokemon');
+  }
 };
 
 // Fetch Pokemon species information

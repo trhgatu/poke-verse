@@ -1,0 +1,100 @@
+:root {
+  /* Pokemon type colors */
+  --normal-color: #A8A878;
+  --normal-dark-color: #8A8A59;
+
+  --fire-color: #F08030;
+  --fire-dark-color: #DD6610;
+
+  --water-color: #6890F0;
+  --water-dark-color: #386CEB;
+
+  --electric-color: #F8D030;
+  --electric-dark-color: #E3BF13;
+
+  --grass-color: #78C850;
+  --grass-dark-color: #5FBD58;
+
+  --ice-color: #98D8D8;
+  --ice-dark-color: #69C6C6;
+
+  --fighting-color: #C03028;
+  --fighting-dark-color: #9D2721;
+
+  --poison-color: #A040A0;
+  --poison-dark-color: #803380;
+
+  --ground-color: #E0C068;
+  --ground-dark-color: #D4B358;
+
+  --flying-color: #A890F0;
+  --flying-dark-color: #9380DC;
+
+  --psychic-color: #F85888;
+  --psychic-dark-color: #F6176C;
+
+  --bug-color: #A8B820;
+  --bug-dark-color: #8D9A1B;
+
+  --rock-color: #B8A038;
+  --rock-dark-color: #93802D;
+
+  --ghost-color: #705898;
+  --ghost-dark-color: #554374;
+
+  --dragon-color: #7038F8;
+  --dragon-dark-color: #4C08EF;
+
+  --dark-color: #705848;
+  --dark-dark-color: #513F34;
+
+  --steel-color: #B8B8D0;
+  --steel-dark-color: #9797BA;
+
+  --fairy-color: #EE99AC;
+  --fairy-dark-color: #E77A93;
+}
+
+/* Gradient backgrounds for cards */
+.bg-normal-gradient { background: linear-gradient(135deg, var(--normal-color), var(--normal-dark-color)); }
+.bg-fire-gradient { background: linear-gradient(135deg, var(--fire-color), var(--fire-dark-color)); }
+.bg-water-gradient { background: linear-gradient(135deg, var(--water-color), var(--water-dark-color)); }
+.bg-electric-gradient { background: linear-gradient(135deg, var(--electric-color), var(--electric-dark-color)); }
+.bg-grass-gradient { background: linear-gradient(135deg, var(--grass-color), var(--grass-dark-color)); }
+.bg-ice-gradient { background: linear-gradient(135deg, var(--ice-color), var(--ice-dark-color)); }
+.bg-fighting-gradient { background: linear-gradient(135deg, var(--fighting-color), var(--fighting-dark-color)); }
+.bg-poison-gradient { background: linear-gradient(135deg, var(--poison-color), var(--poison-dark-color)); }
+.bg-ground-gradient { background: linear-gradient(135deg, var(--ground-color), var(--ground-dark-color)); }
+.bg-flying-gradient { background: linear-gradient(135deg, var(--flying-color), var(--flying-dark-color)); }
+.bg-psychic-gradient { background: linear-gradient(135deg, var(--psychic-color), var(--psychic-dark-color)); }
+.bg-bug-gradient { background: linear-gradient(135deg, var(--bug-color), var(--bug-dark-color)); }
+.bg-rock-gradient { background: linear-gradient(135deg, var(--rock-color), var(--rock-dark-color)); }
+.bg-ghost-gradient { background: linear-gradient(135deg, var(--ghost-color), var(--ghost-dark-color)); }
+.bg-dragon-gradient { background: linear-gradient(135deg, var(--dragon-color), var(--dragon-dark-color)); }
+.bg-dark-gradient { background: linear-gradient(135deg, var(--dark-color), var(--dark-dark-color)); }
+.bg-steel-gradient { background: linear-gradient(135deg, var(--steel-color), var(--steel-dark-color)); }
+.bg-fairy-gradient { background: linear-gradient(135deg, var(--fairy-color), var(--fairy-dark-color)); }
+
+/* Pokeball background pattern */
+.bg-pokeball {
+  background-image: url('/pokeball-bg.svg');
+}
+
+/* Pokeball detail pattern */
+.bg-pokeball-detail {
+  background-image: url('/pokeball-detail.svg');
+}
+
+/* Custom animations */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}

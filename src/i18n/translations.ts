@@ -42,6 +42,10 @@ export const translations: Translations = {
     en: 'Search',
     vi: 'Tìm'
   },
+  'evolution.popular': {
+    en: 'Popular Pokémon',
+    vi: 'Pokémon phổ biến'
+  },
   'evolution.simulator': {
     en: 'Evolution Simulator',
     vi: 'Mô phỏng tiến hóa'
@@ -70,6 +74,14 @@ export const translations: Translations = {
     en: 'Search or choose from popular Pokémon above',
     vi: 'Tìm kiếm hoặc chọn từ danh sách Pokémon phổ biến bên trên'
   },
+  'evolution.startPrompt': {
+    en: 'Choose a Pokémon on the left',
+    vi: 'Chọn một Pokémon ở bên trái'
+  },
+  'evolution.instructions': {
+    en: 'Select any Pokémon to visualize its evolution chain in this simulator',
+    vi: 'Chọn bất kỳ Pokémon nào để xem chuỗi tiến hóa của nó trong trình mô phỏng này'
+  },
   'evolution.method.level': {
     en: 'Evolves at level ${level}',
     vi: 'Tiến hóa ở cấp độ ${level}'
@@ -90,6 +102,14 @@ export const translations: Translations = {
     en: 'Evolves when conditions are met',
     vi: 'Tiến hóa khi đạt điều kiện'
   },
+  'evolution.fullyEvolved': {
+    en: 'Fully Evolved',
+    vi: 'Đã tiến hóa hoàn toàn'
+  },
+  'evolution.fullyEvolvedDesc': {
+    en: 'This Pokémon has reached its final evolution stage',
+    vi: 'Pokémon này đã đạt đến giai đoạn tiến hóa cuối cùng'
+  },
 
   // Home Page
   'home.title': {
@@ -105,8 +125,8 @@ export const translations: Translations = {
     vi: 'Tìm Pokémon theo tên...'
   },
   'home.search.button': {
-    en: 'Pokemon found',
-    vi: 'Pokemon được tìm thấy'
+    en: 'Search',
+    vi: 'Tìm kiếm'
   },
   'home.filter.all': {
     en: 'All Types',
@@ -119,6 +139,14 @@ export const translations: Translations = {
   'home.pagination.next': {
     en: 'Next',
     vi: 'Tiếp theo'
+  },
+  'home.pagination.page': {
+    en: 'Page',
+    vi: 'Trang'
+  },
+  'home.pagination.of': {
+    en: 'of',
+    vi: 'trên'
   },
   'home.noResults': {
     en: 'No Pokémon found matching your criteria',

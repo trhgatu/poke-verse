@@ -115,8 +115,37 @@ export const EvolutionChain: React.FC<EvolutionChainProps> = ({ chain }) => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center p-8">
-        <div className="w-8 h-8 border-4 border-zinc-700 border-t-red-500 rounded-full animate-spin"></div>
+      <div className="flex flex-col">
+        <div className="flex flex-wrap justify-center items-center gap-2 md:gap-4">
+          {/* Simulating a 3-stage evolution chain skeleton */}
+          {[...Array(3)].map((_, index) => (
+            <React.Fragment key={index}>
+              {/* Add arrow between skeleton stages */}
+              {index > 0 && (
+                <div className="flex flex-col items-center mx-2">
+                  <ArrowRight className="text-zinc-500" />
+                  <div className="text-xs text-zinc-400 mt-1 text-center max-w-[80px]">
+                    <div className="h-3 w-16 bg-zinc-700 rounded-md animate-pulse"></div>
+                  </div>
+                </div>
+              )}
+
+              {/* Pokemon card skeleton */}
+              <div className="bg-zinc-700 p-4 rounded-xl">
+                <div className="w-24 h-24 bg-zinc-800 rounded-full p-2 flex items-center justify-center mb-2 relative">
+                  <div className="w-16 h-16 bg-zinc-700 rounded-full animate-pulse"></div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full border-2 border-zinc-600 border-t-red-500 animate-spin"></div>
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="h-5 w-16 bg-zinc-800 rounded-md animate-pulse mx-auto mb-1"></div>
+                  <div className="h-3 w-10 bg-zinc-800 rounded-md animate-pulse mx-auto"></div>
+                </div>
+              </div>
+            </React.Fragment>
+          ))}
+        </div>
       </div>
     );
   }

@@ -7,6 +7,7 @@ import { TypeFilter } from '../components/TypeFilter';
 import { Button } from '../components/ui/button';
 import { usePokemonStore } from '../store/pokemonStore';
 import { Pokemon } from '../types/pokemon';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface PokemonResult {
   name: string;
@@ -14,25 +15,58 @@ interface PokemonResult {
 }
 
 export const HomePage: React.FC = () => {
-  const { pokemonList, isLoading, error, fetchPokemonList, fetchAllPokemon } = usePokemonStore();
+  const { t } = useLanguage();
+  const {
+    pokemonList,
+    isLoading,
+    error,
+    fetchPokemonList,
+    fetchAllPokemon,
+    searchPokemon,
+    searchResults
+  } = usePokemonStore();
+
   const [currentPage, setCurrentPage] = useState(1);
   const [searchFilter, setSearchFilter] = useState('');
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [typeFilteredPokemon, setTypeFilteredPokemon] = useState<Pokemon[]>([]);
   const [isFilteringByType, setIsFilteringByType] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const itemsPerPage = 20;
+
+  // Xử lý thay đổi tìm kiếm
+  const handleSearchChange = (value: string) => {
+    setSearchFilter(value);
+
+    // Nếu giá trị tìm kiếm không trống, thực hiện tìm kiếm
+    if (value.trim()) {
+      setIsSearching(true);
+      // Sử dụng chức năng tìm kiếm mới
+      searchPokemon(value);
+    } else {
+      setIsSearching(false);
+
+      // Nếu đang lọc theo loại, fetch lại dữ liệu theo loại
+      if (selectedType) {
+        fetchAllPokemon();
+      } else {
+        // Nếu không, quay lại chế độ phân trang thông thường
+        fetchPokemonList(itemsPerPage, (currentPage - 1) * itemsPerPage);
+      }
+    }
+  };
 
   // Fetch paginated pokemon without type filter
   useEffect(() => {
-    if (!selectedType) {
+    if (!selectedType && !isSearching) {
       setIsFilteringByType(false);
       fetchPokemonList(itemsPerPage, (currentPage - 1) * itemsPerPage);
     }
-  }, [currentPage, fetchPokemonList, selectedType]);
+  }, [currentPage, fetchPokemonList, selectedType, isSearching]);
 
   // Fetch all pokemon when filtering by type
   useEffect(() => {
-    if (selectedType) {
+    if (selectedType && !isSearching) {
       setIsFilteringByType(true);
       const fetchPokemonByType = async () => {
         await fetchAllPokemon();
@@ -40,11 +74,11 @@ export const HomePage: React.FC = () => {
 
       fetchPokemonByType();
     }
-  }, [selectedType, fetchAllPokemon]);
+  }, [selectedType, fetchAllPokemon, isSearching]);
 
   // Filter by type once we have the complete list
   useEffect(() => {
-    if (selectedType && pokemonList?.allPokemon) {
+    if (selectedType && pokemonList?.allPokemon && !isSearching) {
       const filtered = pokemonList.allPokemon.filter(pokemon =>
         pokemon.types.some(type => type.type.name === selectedType)
       );
@@ -52,14 +86,15 @@ export const HomePage: React.FC = () => {
       // Reset to page 1 when changing type filter
       setCurrentPage(1);
     }
-  }, [selectedType, pokemonList?.allPokemon]);
+  }, [selectedType, pokemonList?.allPokemon, isSearching]);
 
   const handleNextPage = () => {
-    if (!isFilteringByType && pokemonList?.next) {
+    if (!isFilteringByType && !isSearching && pokemonList?.next) {
       setCurrentPage(prev => prev + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else if (isFilteringByType) {
-      const maxPage = Math.ceil(typeFilteredPokemon.length / itemsPerPage);
+    } else if (isFilteringByType || isSearching) {
+      const displayedPokemon = isSearching ? searchResults : typeFilteredPokemon;
+      const maxPage = Math.ceil(displayedPokemon.length / itemsPerPage);
       if (currentPage < maxPage) {
         setCurrentPage(prev => prev + 1);
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -74,34 +109,56 @@ export const HomePage: React.FC = () => {
     }
   };
 
-  // Apply search filter to the appropriate pokemon list
-  const getFilteredPokemon = (): (Pokemon | PokemonResult)[] => {
-    if (isFilteringByType) {
-      // For type filtered pokemon, we also need to paginate manually
-      const startIndex = (currentPage - 1) * itemsPerPage;
-      const endIndex = startIndex + itemsPerPage;
+  // Get the Pokemon to display based on current state
+  const getDisplayedPokemon = (): (Pokemon | PokemonResult)[] => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
 
-      // Apply search filter to type-filtered pokemon
-      return typeFilteredPokemon
-        .filter(pokemon => pokemon.name.toLowerCase().includes(searchFilter.toLowerCase()))
-        .slice(startIndex, endIndex);
+    if (isSearching) {
+      // Nếu đang tìm kiếm, sử dụng kết quả tìm kiếm
+      return searchResults.slice(startIndex, endIndex);
+    } else if (isFilteringByType) {
+      // Nếu đang lọc theo loại, sử dụng danh sách đã lọc
+      return typeFilteredPokemon.slice(startIndex, endIndex);
     } else {
-      // Just apply search filter to the paginated results from API
-      return (pokemonList?.results || [])
-        .filter(pokemon => pokemon.name.toLowerCase().includes(searchFilter.toLowerCase()));
+      // Ngược lại, sử dụng danh sách phân trang thông thường
+      return pokemonList?.results || [];
     }
   };
 
   const getMaxPages = (): number => {
-    if (isFilteringByType) {
+    if (isSearching) {
+      return Math.ceil(searchResults.length / itemsPerPage);
+    } else if (isFilteringByType) {
       return Math.ceil(typeFilteredPokemon.length / itemsPerPage);
     } else {
       return Math.ceil((pokemonList?.count || 0) / itemsPerPage);
     }
   };
 
-  const filteredPokemon = getFilteredPokemon();
+  const filteredPokemon = getDisplayedPokemon();
   const maxPages = getMaxPages();
+
+  // Lấy tổng số Pokemon phù hợp
+  const getTotalMatchingPokemon = (): number => {
+    if (isSearching) {
+      return searchResults.length;
+    } else if (isFilteringByType) {
+      return typeFilteredPokemon.length;
+    } else {
+      return pokemonList?.count || 0;
+    }
+  };
+
+  // Xử lý xóa bộ lọc
+  const handleClearFilters = () => {
+    setSearchFilter('');
+    setSelectedType(null);
+    setIsSearching(false);
+    setIsFilteringByType(false);
+    setCurrentPage(1);
+    fetchPokemonList(itemsPerPage, 0);
+  };
 
   const container = {
     hidden: { opacity: 0 },
@@ -122,7 +179,7 @@ export const HomePage: React.FC = () => {
             <div className="w-10 h-10 bg-white rounded-full border-4 border-zinc-800"></div>
           </div>
         </div>
-        <p className="text-zinc-400">Loading Pokémon...</p>
+        <p className="text-zinc-400">{t('ui.loadingPokemon')}</p>
       </div>
     );
   }
@@ -136,14 +193,14 @@ export const HomePage: React.FC = () => {
           transition={{ type: "spring", stiffness: 300, damping: 15 }}
           className="bg-zinc-800 p-8 rounded-2xl shadow-lg max-w-md mx-auto text-center border border-red-500/20"
         >
-          <h2 className="text-2xl font-bold text-white mb-4">Error Loading Pokémon</h2>
+          <h2 className="text-2xl font-bold text-white mb-4">{t('ui.loadingPokemonError')}</h2>
           <p className="text-red-400 mb-6">{error}</p>
           <Button
             variant="pokemon"
             className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 border-none"
-            onClick={() => fetchPokemonList(itemsPerPage, (currentPage - 1) * itemsPerPage)}
+            onClick={handleClearFilters}
           >
-            Try Again
+            {t('ui.tryAgain')}
           </Button>
         </motion.div>
       </div>
@@ -167,7 +224,7 @@ export const HomePage: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
           >
-            Explore the World of Pokémon
+            {t('home.title')}
           </motion.h1>
           <motion.p
             className="text-zinc-400 text-center md:text-left mt-4 max-w-2xl"
@@ -175,7 +232,7 @@ export const HomePage: React.FC = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.7 }}
           >
-            Discover and learn about all Pokémon in the Pokédex. Click on any Pokémon to see detailed stats, evolutions, and more!
+            {t('home.description')}
           </motion.p>
         </div>
       </motion.div>
@@ -186,9 +243,9 @@ export const HomePage: React.FC = () => {
         <div className="w-full">
           <SearchFilter
             value={searchFilter}
-            onChange={setSearchFilter}
-            placeholder="Filter Pokémon by name..."
-            resultsCount={isFilteringByType ? typeFilteredPokemon.length : filteredPokemon.length}
+            onChange={handleSearchChange}
+            placeholder={t('home.search.placeholder')}
+            resultsCount={getTotalMatchingPokemon()}
           />
         </div>
 
@@ -197,12 +254,13 @@ export const HomePage: React.FC = () => {
           <TypeFilter
             selectedType={selectedType}
             onChange={setSelectedType}
+            disabled={isSearching}
           />
         </div>
       </div>
 
-      {/* Loading indicator when filtering by type */}
-      {selectedType && isLoading && (
+      {/* Loading indicator when filtering by type or searching */}
+      {(selectedType || searchFilter) && isLoading && (
         <div className="flex justify-center my-6">
           <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-white"></div>
         </div>
@@ -231,26 +289,23 @@ export const HomePage: React.FC = () => {
             <div className="flex flex-col items-center justify-center py-20 bg-zinc-800/30 rounded-2xl border border-zinc-700/30 w-full">
               <div className="text-zinc-400 mb-4">
                 {searchFilter
-                  ? `No Pokémon found matching "${searchFilter}"${selectedType ? ` with type "${selectedType}"` : ''}`
+                  ? t('home.noResults')
                   : selectedType
-                    ? `No Pokémon found with type "${selectedType}"`
-                    : 'No Pokémon found'}
+                    ? t('home.noResults')
+                    : t('home.noResults')}
               </div>
               <Button
                 variant="outline"
                 className="bg-zinc-800 text-white border-zinc-700"
-                onClick={() => {
-                  setSearchFilter('');
-                  setSelectedType(null);
-                }}
+                onClick={handleClearFilters}
               >
-                Clear filters
+                {t('home.clearFilters')}
               </Button>
             </div>
           )}
 
           {/* Pagination */}
-          {filteredPokemon.length > 0 && searchFilter === '' && (
+          {filteredPokemon.length > 0 && (
             <motion.div
               className="mt-10 flex flex-col sm:flex-row justify-between items-center gap-4 bg-zinc-800/50 p-4 rounded-2xl border border-zinc-700/50 w-full"
               initial={{ opacity: 0, y: 20 }}
@@ -258,7 +313,7 @@ export const HomePage: React.FC = () => {
               transition={{ delay: 0.3 }}
             >
               <div className="text-zinc-400">
-                Page {currentPage} of {maxPages}
+                {t('home.pagination.page')} {currentPage} {t('home.pagination.of')} {maxPages}
               </div>
 
               <div className="flex items-center gap-3">
@@ -269,19 +324,19 @@ export const HomePage: React.FC = () => {
                   disabled={currentPage === 1}
                 >
                   <ChevronLeft size={18} />
-                  Previous
+                  {t('home.pagination.prev')}
                 </Button>
 
                 <Button
                   variant="outline"
                   className="flex items-center gap-2 bg-zinc-800 text-white border-zinc-700 hover:bg-zinc-700"
                   onClick={handleNextPage}
-                  disabled={isFilteringByType
+                  disabled={isFilteringByType || isSearching
                     ? currentPage >= maxPages
                     : !pokemonList.next
                   }
                 >
-                  Next
+                  {t('home.pagination.next')}
                   <ChevronRight size={18} />
                 </Button>
               </div>

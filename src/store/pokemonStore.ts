@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { getAllPokemon, getPokemonByName, getPokemonList, getPokemonSpecies, getEvolutionChain } from '../services/api';
+import { getAllPokemon, getPokemonByName, getPokemonList, getPokemonSpecies, getEvolutionChain, searchPokemonByName } from '../services/api';
 import { Pokemon, PokemonListResponse, PokemonSpecies, EvolutionChain } from '../types/pokemon';
 
 // Extended interface for PokemonListResponse that includes allPokemon
@@ -16,9 +16,11 @@ interface PokemonState {
   favorites: number[];
   species: PokemonSpecies | null;
   evolutionChain: EvolutionChain | null;
+  searchResults: Pokemon[];
   fetchPokemonList: (limit: number, offset: number) => Promise<void>;
   fetchPokemonDetails: (name: string) => Promise<void>;
   fetchAllPokemon: () => Promise<void>;
+  searchPokemon: (term: string) => Promise<void>;
   fetchSpeciesAndEvolutionChain: (id: number) => Promise<void>;
   addToFavorites: (id: number) => void;
   removeFromFavorites: (id: number) => void;
@@ -32,6 +34,7 @@ export const usePokemonStore = create<PokemonState>((set, get) => ({
   error: null,
   species: null,
   evolutionChain: null,
+  searchResults: [],
   favorites: JSON.parse(localStorage.getItem('pokemonFavorites') || '[]'),
 
   fetchPokemonList: async (limit: number, offset: number) => {
@@ -77,6 +80,34 @@ export const usePokemonStore = create<PokemonState>((set, get) => ({
     } catch (error) {
       set({ error: 'Failed to fetch all Pokemon', isLoading: false });
       console.error('Error fetching all Pokemon:', error);
+    }
+  },
+
+  searchPokemon: async (term: string) => {
+    if (!term.trim()) {
+      set({ searchResults: [] });
+      return;
+    }
+
+    set({ isLoading: true, error: null });
+    try {
+      const results = await searchPokemonByName(term);
+      set({
+        searchResults: results,
+        isLoading: false
+      });
+
+      if (results.length > 0) {
+        set((state) => ({
+          pokemonList: {
+            ...state.pokemonList as ExtendedPokemonListResponse,
+            allPokemon: results
+          }
+        }));
+      }
+    } catch (error) {
+      set({ error: 'Failed to search Pokemon', isLoading: false });
+      console.error('Error searching Pokemon:', error);
     }
   },
 
