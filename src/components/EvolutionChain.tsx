@@ -106,6 +106,13 @@ export const EvolutionChain: React.FC<EvolutionChainProps> = ({ chain }) => {
     }
   };
 
+  const handlePokemonClick = (pokemonName: string) => {
+    // Điều hướng đến trang chi tiết của Pokémon
+    navigate(`/pokemon/${pokemonName}`);
+    // Cuộn lên đầu trang
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center p-8">
@@ -134,7 +141,7 @@ export const EvolutionChain: React.FC<EvolutionChainProps> = ({ chain }) => {
             {/* Pokemon card */}
             <motion.div
               className="bg-zinc-700 p-4 rounded-xl cursor-pointer hover:bg-zinc-600 transition-colors"
-              onClick={() => navigate(`/pokemon/${pokemon.name}`)}
+              onClick={() => handlePokemonClick(pokemon.name)}
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >

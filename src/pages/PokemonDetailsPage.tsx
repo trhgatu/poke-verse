@@ -28,6 +28,14 @@ export const PokemonDetailsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('stats');
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [name]);
+
+  useEffect(() => {
     if (name) {
       fetchPokemonDetails(name);
     }

@@ -50,6 +50,7 @@ export const PokemonCard: React.FC<PokemonCardProps> = ({ name }) => {
 
   const handleCardClick = () => {
     navigate(`/pokemon/${pokemon.name}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleFavoriteClick = (e: React.MouseEvent) => {

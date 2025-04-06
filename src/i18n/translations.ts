@@ -105,8 +105,8 @@ export const translations: Translations = {
     vi: 'Tìm Pokémon theo tên...'
   },
   'home.search.button': {
-    en: 'Search',
-    vi: 'Tìm kiếm'
+    en: 'Pokemon found',
+    vi: 'Pokemon được tìm thấy'
   },
   'home.filter.all': {
     en: 'All Types',
