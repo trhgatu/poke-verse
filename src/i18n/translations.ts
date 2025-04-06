@@ -258,6 +258,14 @@ export const translations: Translations = {
     en: 'Locations',
     vi: 'Địa điểm'
   },
+  'regions.knownRegions': {
+    en: 'Known Regions',
+    vi: 'Vùng đã biết'
+  },
+  'regions.noRegionsDescription': {
+    en: 'No regions have been discovered yet. Check back again later.',
+    vi: 'Chưa có vùng nào được khám phá. Vui lòng quay lại sau.'
+  },
   'regions.locationCount': {
     en: '${count} Locations',
     vi: '${count} địa điểm'

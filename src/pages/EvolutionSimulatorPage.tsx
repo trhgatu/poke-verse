@@ -111,10 +111,10 @@ export const EvolutionSimulatorPage: React.FC = () => {
 
   // Hiển thị phần search
   const renderSearchPanel = () => (
-    <div className="w-full h-full">
-      <div className="bg-zinc-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-zinc-700/50 h-full">
+    <div className="w-full">
+      <div className="bg-zinc-800/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-xl border border-zinc-700/50">
         <div className="relative">
-          <div className="flex">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-0">
             <div className="relative flex-1">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Search size={18} className="text-zinc-400" />
@@ -122,7 +122,7 @@ export const EvolutionSimulatorPage: React.FC = () => {
               <input
                 type="text"
                 placeholder={t('evolution.search')}
-                className="w-full bg-zinc-900/80 border border-zinc-700 rounded-l-lg py-3 pl-10 pr-4 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-pink-500/50 transition-all"
+                className="w-full bg-zinc-900/80 border border-zinc-700 rounded-lg sm:rounded-r-none py-3 pl-10 pr-4 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-pink-500/50 transition-all"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -130,7 +130,7 @@ export const EvolutionSimulatorPage: React.FC = () => {
             </div>
             <motion.button
               onClick={() => searchTerm && handleSelectPokemon(searchTerm.toLowerCase())}
-              className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white px-5 font-bold rounded-r-lg transition-colors shadow-lg"
+              className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white px-5 py-3 font-bold rounded-lg sm:rounded-l-none transition-colors shadow-lg"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
             >
@@ -155,7 +155,8 @@ export const EvolutionSimulatorPage: React.FC = () => {
                   alt={pokemon.name}
                   className="w-5 h-5 mr-1"
                 />
-                {capitalizeFirstLetter(pokemon.name)}
+                <span className="sm:inline hidden">{capitalizeFirstLetter(pokemon.name)}</span>
+                <span className="sm:hidden inline">{capitalizeFirstLetter(pokemon.name.substring(0, 4))}</span>
               </motion.button>
             ))}
           </div>
@@ -164,18 +165,18 @@ export const EvolutionSimulatorPage: React.FC = () => {
         {/* Initial state message */}
         {!selectedPokemon && !isLoading && !error && (
           <motion.div
-            className="mt-8 text-center p-6"
+            className="mt-6 text-center p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            <div className="w-24 h-24 mx-auto mb-4 relative">
+            <div className="w-16 h-16 sm:w-24 sm:h-24 mx-auto mb-4 relative">
               <div className="w-full h-full bg-pokeball bg-center bg-contain bg-no-repeat opacity-20 animate-spin-slow"></div>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-4xl">🔍</span>
+                <span className="text-3xl sm:text-4xl">🔍</span>
               </div>
             </div>
-            <h3 className="text-xl font-bold text-zinc-300 mb-2">{t('evolution.selectPrompt')}</h3>
+            <h3 className="text-lg sm:text-xl font-bold text-zinc-300 mb-2">{t('evolution.selectPrompt')}</h3>
             <p className="text-zinc-500 text-sm">{t('evolution.selectDescription')}</p>
           </motion.div>
         )}
@@ -188,13 +189,13 @@ export const EvolutionSimulatorPage: React.FC = () => {
     if (isLoading) {
       return (
         <motion.div
-          className="flex justify-center items-center p-12 h-full"
+          className="flex justify-center items-center p-8 bg-zinc-800/80 backdrop-blur-sm rounded-2xl min-h-[300px] sm:min-h-[400px]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
           <div className="relative">
-            <div className="w-20 h-20 border-8 border-zinc-700/30 border-t-pink-500 rounded-full animate-spin"></div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-pokeball bg-center bg-contain bg-no-repeat"></div>
+            <div className="w-16 h-16 sm:w-20 sm:h-20 border-8 border-zinc-700/30 border-t-pink-500 rounded-full animate-spin"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 bg-pokeball bg-center bg-contain bg-no-repeat"></div>
           </div>
         </motion.div>
       );
@@ -205,17 +206,17 @@ export const EvolutionSimulatorPage: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center p-10 bg-zinc-800/80 backdrop-blur-sm rounded-2xl border border-red-500/30 h-full flex flex-col items-center justify-center"
+          className="text-center p-6 sm:p-10 bg-zinc-800/80 backdrop-blur-sm rounded-2xl border border-red-500/30 min-h-[300px] sm:min-h-[400px] flex flex-col items-center justify-center"
         >
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center">
-            <svg className="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center">
+            <svg className="w-7 h-7 sm:w-8 sm:h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
-          <p className="text-red-400 mb-4 font-medium text-lg">{error}</p>
+          <p className="text-red-400 mb-4 font-medium text-base sm:text-lg">{error}</p>
           <motion.button
             onClick={() => window.location.reload()}
-            className="px-5 py-2.5 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg font-medium shadow-lg"
+            className="px-4 py-2 sm:px-5 sm:py-2.5 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg font-medium shadow-lg"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -232,7 +233,6 @@ export const EvolutionSimulatorPage: React.FC = () => {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
-          className="h-full"
         >
           <EvolutionSimulator chain={evolutionChain.chain} />
         </motion.div>
@@ -241,15 +241,15 @@ export const EvolutionSimulatorPage: React.FC = () => {
 
     return (
       <motion.div
-        className="flex flex-col items-center justify-center h-full p-6 bg-zinc-800/50 backdrop-blur-sm rounded-2xl"
+        className="flex flex-col items-center justify-center p-6 bg-zinc-800/50 backdrop-blur-sm rounded-2xl min-h-[300px] sm:min-h-[400px]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
       >
-        <div className="w-32 h-32 mb-6 relative">
+        <div className="w-20 h-20 sm:w-32 sm:h-32 mb-6 relative">
           <div className="absolute inset-0 bg-pokeball bg-center bg-contain bg-no-repeat opacity-20 animate-spin-slow"></div>
         </div>
-        <h3 className="text-xl font-bold text-zinc-400 mb-2 text-center">{t('evolution.startPrompt')}</h3>
+        <h3 className="text-lg sm:text-xl font-bold text-zinc-400 mb-2 text-center">{t('evolution.startPrompt')}</h3>
         <p className="text-zinc-500 text-center max-w-md">{t('evolution.instructions')}</p>
       </motion.div>
     );
@@ -275,7 +275,7 @@ export const EvolutionSimulatorPage: React.FC = () => {
 
       {/* Header */}
       <motion.div
-        className="text-center mb-8"
+        className="text-center mb-6 sm:mb-8"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -286,23 +286,27 @@ export const EvolutionSimulatorPage: React.FC = () => {
             animate={{ opacity: [0.2, 0.4, 0.2] }}
             transition={{ duration: 3, repeat: Infinity }}
           ></motion.div>
-          <h1 className="relative px-6 py-2 bg-zinc-900/80 backdrop-blur-md rounded-lg text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500 inline-flex items-center">
-            <Dna className="mr-3 text-pink-500" size={32} />
+          <h1 className="relative px-4 sm:px-6 py-2 bg-zinc-900/80 backdrop-blur-md rounded-lg text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500 inline-flex items-center">
+            <span className="hidden sm:inline-block mr-2 sm:mr-3">
+              <Dna className="text-pink-500" size={24} />
+            </span>
             {t('evolution.title')}
-            <Sparkles className="ml-3 text-purple-500" size={24} />
+            <span className="hidden sm:inline-block ml-2 sm:ml-3">
+              <Sparkles className="text-purple-500" size={18} />
+            </span>
           </h1>
         </div>
-        <p className="text-zinc-400 mt-3 max-w-2xl mx-auto">
+        <p className="text-zinc-400 mt-2 sm:mt-3 max-w-2xl mx-auto text-sm sm:text-base px-2">
           {t('evolution.description')}
         </p>
       </motion.div>
 
       {/* Two-column layout */}
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col lg:flex-row gap-6 h-[600px]">
+        <div className="flex flex-col lg:flex-row gap-6">
           {/* Left column - Search panel */}
           <motion.div
-            className="w-full lg:w-1/3"
+            className="w-full lg:w-1/3 mb-6 lg:mb-0"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}

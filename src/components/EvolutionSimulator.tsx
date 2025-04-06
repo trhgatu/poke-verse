@@ -4,7 +4,7 @@ import { ChainLink, Pokemon } from '../types/pokemon';
 import { getPokemonByName } from '../services/api';
 import { capitalizeFirstLetter, formatPokemonId, getColorByType } from '../lib/utils';
 import { useLanguage } from '../contexts/LanguageContext';
-import { Zap, RefreshCw, ChevronDown, ChevronRight } from 'lucide-react';
+import { Zap, RefreshCw, ChevronDown, ChevronRight, Loader2 } from 'lucide-react';
 
 // Interface for evolution method display
 interface EvolutionViewerProps {
@@ -18,12 +18,13 @@ interface EvolutionViewerProps {
 
 // Interface for control buttons
 interface EvolutionControlsProps {
-  currentStage: number;
   evolutionSequence: Pokemon[];
-  evolutionInProgress: boolean;
+  currentStage: number;
+  handleEvolve: () => void;
+  handleReset: () => void;
+  canEvolve: boolean;
+  isLoading: boolean;
   mainType: string;
-  triggerEvolution: () => void;
-  resetEvolution: () => void;
 }
 
 // Main component props
@@ -48,7 +49,7 @@ const EvolutionViewer: React.FC<EvolutionViewerProps> = ({
     : null;
 
   return (
-    <div className="relative p-6">
+    <div className="relative p-3 sm:p-6">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentStage}
@@ -58,8 +59,8 @@ const EvolutionViewer: React.FC<EvolutionViewerProps> = ({
           className="flex flex-col md:flex-row items-center justify-between"
         >
           {/* Current Pokémon */}
-          <div className="w-full md:w-5/12 flex flex-col items-center mb-8 md:mb-0">
-            <div className="relative w-48 h-48 md:w-56 md:h-56 flex items-center justify-center">
+          <div className="w-full md:w-5/12 flex flex-col items-center mb-6 md:mb-0">
+            <div className="relative w-32 h-32 sm:w-48 sm:h-48 md:w-56 md:h-56 flex items-center justify-center">
               {/* Decorative background */}
               <div className={`absolute inset-0 rounded-full ${getColorByType(mainType)}/20 backdrop-blur-sm`}></div>
 
@@ -89,34 +90,36 @@ const EvolutionViewer: React.FC<EvolutionViewerProps> = ({
                     />
                   </motion.div>
 
-                  {/* Energy particles */}
-                  <motion.div
-                    className="absolute inset-0"
-                    animate={{ opacity: [0, 1, 0] }}
-                    transition={{ duration: 3, repeat: 1 }}
-                  >
-                    {[...Array(15)].map((_, i) => (
-                      <motion.div
-                        key={i}
-                        className="absolute w-2 h-2 rounded-full bg-white"
-                        style={{
-                          top: `${Math.random() * 100}%`,
-                          left: `${Math.random() * 100}%`,
-                        }}
-                        animate={{
-                          scale: [0, 1.5, 0],
-                          opacity: [0, 0.8, 0],
-                          y: [0, -Math.random() * 60],
-                          x: [0, (Math.random() - 0.5) * 60]
-                        }}
-                        transition={{
-                          duration: 1.5 + Math.random(),
-                          repeat: 2,
-                          delay: Math.random() * 1
-                        }}
-                      />
-                    ))}
-                  </motion.div>
+                  {/* Energy particles and effects - simplified on mobile */}
+                  <div className="hidden sm:block">
+                    <motion.div
+                      className="absolute inset-0"
+                      animate={{ opacity: [0, 1, 0] }}
+                      transition={{ duration: 3, repeat: 1 }}
+                    >
+                      {[...Array(10)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          className="absolute w-2 h-2 rounded-full bg-white"
+                          style={{
+                            top: `${Math.random() * 100}%`,
+                            left: `${Math.random() * 100}%`,
+                          }}
+                          animate={{
+                            scale: [0, 1.5, 0],
+                            opacity: [0, 0.8, 0],
+                            y: [0, -Math.random() * 40],
+                            x: [0, (Math.random() - 0.5) * 40]
+                          }}
+                          transition={{
+                            duration: 1.5 + Math.random(),
+                            repeat: 2,
+                            delay: Math.random() * 1
+                          }}
+                        />
+                      ))}
+                    </motion.div>
+                  </div>
 
                   {/* Glow effect */}
                   <motion.div
@@ -133,7 +136,7 @@ const EvolutionViewer: React.FC<EvolutionViewerProps> = ({
                 </>
               ) : (
                 <motion.div
-                  animate={{ y: [0, -10, 0] }}
+                  animate={{ y: [0, -5, 0] }}
                   transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
                 >
                   <img
@@ -145,18 +148,18 @@ const EvolutionViewer: React.FC<EvolutionViewerProps> = ({
               )}
             </div>
 
-            <div className="mt-4 flex flex-col items-center">
-              <div className="bg-zinc-800 px-3 py-1 rounded-full text-sm text-zinc-400 mb-2">
+            <div className="mt-3 sm:mt-4 flex flex-col items-center">
+              <div className="bg-zinc-800 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm text-zinc-400 mb-1 sm:mb-2">
                 {formatPokemonId(currentPokemon.id)}
               </div>
-              <h3 className="text-xl md:text-2xl font-bold text-white capitalize mb-1">
+              <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white capitalize mb-1">
                 {capitalizeFirstLetter(currentPokemon.name)}
               </h3>
-              <div className="flex gap-2 mt-1">
+              <div className="flex gap-1 sm:gap-2 mt-1">
                 {currentPokemon.types.map(type => (
                   <span
                     key={type.type.name}
-                    className={`px-3 py-1 rounded-full text-xs font-bold text-white ${getColorByType(type.type.name)}`}
+                    className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs font-bold text-white ${getColorByType(type.type.name)}`}
                   >
                     {capitalizeFirstLetter(type.type.name)}
                   </span>
@@ -167,7 +170,7 @@ const EvolutionViewer: React.FC<EvolutionViewerProps> = ({
 
           {/* Evolution arrow and info - Center column */}
           {nextPokemon && (
-            <div className="w-full md:w-2/12 flex flex-col md:flex-row justify-center items-center mb-6 md:mb-0">
+            <div className="w-full md:w-2/12 flex flex-col md:flex-row justify-center items-center mb-4 md:mb-0">
               <div className="md:rotate-0 rotate-90 w-12 h-12 md:w-full flex flex-row md:flex-col items-center justify-center">
                 {/* Horizontal arrow on mobile, vertical on desktop */}
                 <motion.div
@@ -175,19 +178,19 @@ const EvolutionViewer: React.FC<EvolutionViewerProps> = ({
                   transition={{ repeat: Infinity, duration: 1.5 }}
                   className="text-zinc-400 hidden md:block"
                 >
-                  <ChevronRight size={32} />
+                  <ChevronRight size={28} />
                 </motion.div>
                 <motion.div
                   animate={{ y: [0, 5, 0] }}
                   transition={{ repeat: Infinity, duration: 1.5 }}
                   className="text-zinc-400 md:hidden"
                 >
-                  <ChevronDown size={32} />
+                  <ChevronDown size={24} />
                 </motion.div>
 
                 {/* Evolution method with better position */}
-                <div className={`${evolutionMethod.length > 15 ? 'w-[150px]' : 'w-auto'} px-3 py-1.5 bg-zinc-800/80 rounded-lg backdrop-blur-sm text-center mt-3 md:mt-4`}>
-                  <span className="text-zinc-300 text-sm whitespace-normal">{evolutionMethod}</span>
+                <div className={`${evolutionMethod.length > 15 ? 'w-[150px]' : 'w-auto'} px-2 sm:px-3 py-1 sm:py-1.5 bg-zinc-800/80 rounded-lg backdrop-blur-sm text-center mt-2 sm:mt-3 md:mt-4`}>
+                  <span className="text-zinc-300 text-xs sm:text-sm whitespace-normal">{evolutionMethod}</span>
                 </div>
               </div>
             </div>
@@ -204,7 +207,7 @@ const EvolutionViewer: React.FC<EvolutionViewerProps> = ({
               }}
               transition={{ duration: 0.5 }}
             >
-              <div className="relative w-40 h-40 md:w-48 md:h-48 flex items-center justify-center">
+              <div className="relative w-28 h-28 sm:w-40 sm:h-40 md:w-48 md:h-48 flex items-center justify-center">
                 {/* Background for next evolution */}
                 <div className={`absolute inset-0 rounded-full ${getColorByType(nextType)}/10 backdrop-blur-sm opacity-60`}></div>
 
@@ -222,15 +225,15 @@ const EvolutionViewer: React.FC<EvolutionViewerProps> = ({
                   />
                 </motion.div>
               </div>
-              <div className="mt-3 flex flex-col items-center">
-                <h3 className="text-lg md:text-xl font-medium text-zinc-400 capitalize">
+              <div className="mt-2 sm:mt-3 flex flex-col items-center">
+                <h3 className="text-base sm:text-lg md:text-xl font-medium text-zinc-400 capitalize">
                   {capitalizeFirstLetter(nextPokemon.name)}
                 </h3>
-                <div className="mt-1 opacity-80 flex flex-wrap justify-center">
+                <div className="mt-1 opacity-80 flex flex-wrap justify-center gap-1">
                   {nextPokemon.types.map(type => (
                     <span
                       key={type.type.name}
-                      className={`px-2 py-0.5 rounded-full text-xs text-white ${getColorByType(type.type.name)} opacity-70 mx-1 mb-1`}
+                      className={`px-1.5 sm:px-2 py-0.5 rounded-full text-xs text-white ${getColorByType(type.type.name)} opacity-70`}
                     >
                       {capitalizeFirstLetter(type.type.name)}
                     </span>
@@ -242,9 +245,9 @@ const EvolutionViewer: React.FC<EvolutionViewerProps> = ({
 
           {/* If there's no next Pokemon, show a done message */}
           {!nextPokemon && (
-            <div className="w-full md:w-7/12 flex flex-col items-center justify-center bg-zinc-800/50 py-8 px-4 rounded-xl border border-zinc-700/50">
+            <div className="w-full md:w-7/12 flex flex-col items-center justify-center bg-zinc-800/50 py-6 sm:py-8 px-3 sm:px-4 rounded-xl border border-zinc-700/50">
               <motion.div
-                className="w-16 h-16 mb-4 text-green-500 bg-green-500/10 rounded-full flex items-center justify-center"
+                className="w-12 h-12 sm:w-16 sm:h-16 mb-3 sm:mb-4 text-green-500 bg-green-500/10 rounded-full flex items-center justify-center"
                 animate={{ scale: 1 }}
                 initial={{ scale: 0.8 }}
                 transition={{
@@ -253,12 +256,12 @@ const EvolutionViewer: React.FC<EvolutionViewerProps> = ({
                   duration: 1
                 }}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-8 sm:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </motion.div>
-              <h3 className="text-lg font-bold text-white mb-2">{t('evolution.fullyEvolved')}</h3>
-              <p className="text-zinc-400 text-center text-sm">{t('evolution.fullyEvolvedDesc')}</p>
+              <h3 className="text-base sm:text-lg font-bold text-white mb-1 sm:mb-2">{t('evolution.fullyEvolved')}</h3>
+              <p className="text-zinc-400 text-center text-xs sm:text-sm">{t('evolution.fullyEvolvedDesc')}</p>
             </div>
           )}
         </motion.div>
@@ -267,45 +270,85 @@ const EvolutionViewer: React.FC<EvolutionViewerProps> = ({
   );
 };
 
-// Evolution controls component - bottom buttons
+// Evolution controls component - handles navigation through evolution chain
 const EvolutionControls: React.FC<EvolutionControlsProps> = ({
-  currentStage,
   evolutionSequence,
-  evolutionInProgress,
-  mainType,
-  triggerEvolution,
-  resetEvolution
+  currentStage,
+  handleEvolve,
+  handleReset,
+  canEvolve,
+  isLoading,
+  mainType
 }) => {
   const { t } = useLanguage();
 
+  if (evolutionSequence.length <= 1) return null;
+
   return (
-    <div className="bg-zinc-900/80 border-t border-zinc-800 p-4 flex justify-center gap-4">
-      {currentStage < evolutionSequence.length - 1 ? (
-        <motion.button
-          onClick={triggerEvolution}
-          disabled={evolutionInProgress}
-          className={`px-6 py-3 rounded-lg font-bold text-white shadow-lg flex items-center ${
-            evolutionInProgress
-              ? 'bg-zinc-700 cursor-not-allowed'
-              : `${getColorByType(mainType)} hover:scale-105`
-          } transition-all duration-300`}
-          whileHover={{ scale: evolutionInProgress ? 1 : 1.05 }}
-          whileTap={{ scale: evolutionInProgress ? 1 : 0.95 }}
-        >
-          <Zap className="mr-2" size={18} />
-          {evolutionInProgress ? t('evolution.evolving') : t('evolution.button')}
-        </motion.button>
-      ) : (
-        <motion.button
-          onClick={resetEvolution}
-          className={`px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-lg flex items-center transition-all duration-300`}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <RefreshCw className="mr-2" size={18} />
-          {t('evolution.restart')}
-        </motion.button>
-      )}
+    <div className="p-3 sm:p-4 border-t border-zinc-800">
+      <div className="flex flex-col sm:flex-row justify-between items-center">
+        {/* Evolution stages */}
+        <div className="flex items-center mb-3 sm:mb-0 space-x-1 sm:space-x-2">
+          <div className="bg-zinc-800/70 px-2 sm:px-3 py-0.5 rounded-full text-xs text-zinc-400">
+            {t('evolution.stage')} {currentStage + 1}/{evolutionSequence.length}
+          </div>
+
+          <div className="flex items-center space-x-1 sm:space-x-1.5">
+            {evolutionSequence.map((_, index) => (
+              <div
+                key={index}
+                className={`w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full transition-colors duration-300 ${
+                  index === currentStage
+                    ? getColorByType(mainType)
+                    : index < currentStage
+                    ? "bg-zinc-400"
+                    : "bg-zinc-700"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Controls */}
+        <div className="flex items-center space-x-2 sm:space-x-3">
+          <button
+            onClick={handleReset}
+            disabled={currentStage === 0 || isLoading}
+            className={`flex items-center justify-center py-1 sm:py-1.5 px-2 sm:px-3 rounded-md border border-zinc-700
+                      ${currentStage === 0 || isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-zinc-800 active:bg-zinc-700'}
+                      transition-colors duration-200 text-xs sm:text-sm`}
+          >
+            <RefreshCw size={14} className="mr-1 sm:mr-1.5" />
+            {t('evolution.reset')}
+          </button>
+
+          <button
+            onClick={handleEvolve}
+            disabled={!canEvolve || isLoading}
+            className={`flex items-center justify-center py-1 sm:py-1.5 px-3 sm:px-4 rounded-md
+                      ${canEvolve && !isLoading
+                        ? `${getColorByType(mainType)} hover:brightness-110 active:brightness-90`
+                        : 'bg-zinc-800 opacity-50 cursor-not-allowed'}
+                      transition-all duration-200 text-white font-medium text-xs sm:text-sm
+                      relative overflow-hidden`}
+          >
+            {isLoading ? (
+              <span className="flex items-center">
+                <Loader2 size={14} className="animate-spin mr-1.5" />
+                {t('evolution.evolving')}
+              </span>
+            ) : (
+              <span className="flex items-center">
+                <Zap size={14} className="mr-1 sm:mr-1.5" />
+                {t('evolution.evolve')}
+              </span>
+            )}
+
+            {/* Pokeball background for the button */}
+            <div className="absolute inset-0 bg-pokeball-detail bg-no-repeat bg-center bg-contain opacity-10"></div>
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
@@ -450,20 +493,20 @@ export const EvolutionSimulator: React.FC<EvolutionSimulatorProps> = ({ chain, o
   return (
     <div className="w-full bg-gradient-to-br from-zinc-800 to-zinc-900 rounded-2xl shadow-xl overflow-hidden border border-zinc-700">
       {/* Header with progress indicator */}
-      <div className={`p-4 ${getColorByType(mainType)} border-b border-zinc-700 relative overflow-hidden`}>
+      <div className={`p-3 sm:p-4 ${getColorByType(mainType)} border-b border-zinc-700 relative overflow-hidden`}>
         <div className="absolute inset-0 bg-pokeball bg-no-repeat bg-right bg-contain opacity-10"></div>
         <div className="relative z-10 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-white flex items-center">
-            <Zap className="mr-2" size={20} />
+          <h2 className="text-lg sm:text-xl font-bold text-white flex items-center">
+            <Zap className="mr-2" size={18} />
             {t('evolution.simulator')}
           </h2>
 
-          <div className="flex items-center bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm">
+          <div className="flex items-center bg-black/30 px-2 sm:px-3 py-1 rounded-full backdrop-blur-sm">
             <div className="flex space-x-1">
               {evolutionSequence.map((_, index) => (
                 <div
                   key={index}
-                  className={`w-2 h-2 rounded-full ${
+                  className={`w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full ${
                     index <= currentStage ? 'bg-white' : 'bg-white/30'
                   }`}
                 ></div>
@@ -487,12 +530,13 @@ export const EvolutionSimulator: React.FC<EvolutionSimulatorProps> = ({ chain, o
       />
 
       <EvolutionControls
-        currentStage={currentStage}
         evolutionSequence={evolutionSequence}
-        evolutionInProgress={evolutionInProgress}
+        currentStage={currentStage}
+        handleEvolve={triggerEvolution}
+        handleReset={resetEvolution}
+        canEvolve={currentStage < evolutionSequence.length - 1}
+        isLoading={evolutionInProgress}
         mainType={mainType}
-        triggerEvolution={triggerEvolution}
-        resetEvolution={resetEvolution}
       />
     </div>
   );
