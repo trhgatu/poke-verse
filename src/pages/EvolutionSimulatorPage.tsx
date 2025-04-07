@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Dna, ArrowLeft, ChevronRight, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { getPokemonByName, getPokemonSpecies, getEvolutionChain } from '../services/api';
+import { getPokemonByName, getPokemonSpecies, getEvolutionChain, getAllPokemon } from '../services/api';
 import { Pokemon, PokemonSpecies, EvolutionChain } from '../types/pokemon';
 import { EvolutionSimulator } from '../components/EvolutionSimulator';
 import { capitalizeFirstLetter } from '../lib/utils';
@@ -18,7 +18,6 @@ export const EvolutionSimulatorPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Danh sách các Pokémon phổ biến để gợi ý
   const popularPokemon = [
     { name: 'bulbasaur', id: 1 },
     { name: 'charmander', id: 4 },
@@ -36,16 +35,21 @@ export const EvolutionSimulatorPage: React.FC = () => {
 
   // Xử lý tìm kiếm
   useEffect(() => {
-    if (searchTerm.length > 1) {
-      // Lọc từ danh sách Pokémon phổ biến
-      const filteredSuggestions = popularPokemon.filter(pokemon =>
-        pokemon.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setSuggestions(filteredSuggestions);
-    } else {
-      setSuggestions([]);
-    }
+    const fetchAllPokemon = async () => {
+      if (searchTerm.length > 1) {
+        const allPokemon = await getAllPokemon();
+        const filteredSuggestions = allPokemon.filter(pokemon =>
+          pokemon.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setSuggestions(filteredSuggestions);
+      } else {
+        setSuggestions([]);
+      }
+    };
+
+    fetchAllPokemon();
   }, [searchTerm]);
+
 
   // Hàm lấy thông tin Pokémon và chuỗi tiến hóa
   const fetchPokemonData = async (name: string) => {
@@ -128,14 +132,6 @@ export const EvolutionSimulatorPage: React.FC = () => {
               />
               {renderSuggestions()}
             </div>
-            <motion.button
-              onClick={() => searchTerm && handleSelectPokemon(searchTerm.toLowerCase())}
-              className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white px-5 py-3 font-bold rounded-lg sm:rounded-l-none transition-colors shadow-lg"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-            >
-              {t('evolution.searchButton')}
-            </motion.button>
           </div>
         </div>
 

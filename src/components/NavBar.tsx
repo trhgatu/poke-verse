@@ -27,7 +27,7 @@ export const NavBar: React.FC = () => {
           <Button
             variant="ghost"
             onClick={() => navigate('/regions')}
-            className="flex items-center gap-2 hover:bg-zinc-800 transition-all duration-300"
+            className="flex items-center gap-2 transition-all duration-300"
           >
             <Map size={20} className="text-blue-500" />
             <span className="hidden md:inline">{t('nav.regions')}</span>
@@ -36,7 +36,7 @@ export const NavBar: React.FC = () => {
           <Button
             variant="ghost"
             onClick={() => navigate('/evolution-simulator')}
-            className="flex items-center gap-2 hover:bg-zinc-800 transition-all duration-300"
+            className="flex items-center gap-2 transition-all duration-300"
           >
             <Dna size={20} className="text-green-500" />
             <span className="hidden md:inline">{t('nav.evolution')}</span>
@@ -45,7 +45,7 @@ export const NavBar: React.FC = () => {
           <Button
             variant="ghost"
             onClick={() => navigate('/favorites')}
-            className="flex items-center gap-2 hover:bg-zinc-800 transition-all duration-300"
+            className="flex items-center gap-2 transition-all duration-300"
           >
             <Heart size={20} className="text-red-500" />
             <span className="hidden md:inline">{t('nav.favorites')}</span>
