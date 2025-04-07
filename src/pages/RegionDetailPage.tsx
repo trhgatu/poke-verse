@@ -51,7 +51,7 @@ export const RegionDetailPage: React.FC = () => {
   }
 
   const regionName = capitalizeFirstLetter(selectedRegion.name);
-  const generationName = selectedRegion.main_generation.name
+  const generationName = selectedRegion.main_generation?.name
     .replace('generation-', 'Gen ')
     .toUpperCase();
 
@@ -105,8 +105,8 @@ export const RegionDetailPage: React.FC = () => {
               <LocationCard
                 key={location.name}
                 name={location.name}
-                region={selectedRegion.name}
-                areaCount={1} // Placeholder until we fetch the actual location details
+                region={selectedRegion?.name}
+                areaCount={1}
               />
             ))}
           </motion.div>
