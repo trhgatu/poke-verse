@@ -54,7 +54,7 @@ export const translations: Translations = {
     en: 'This Pokémon has no evolution stages.',
     vi: 'Pokémon này không có quá trình tiến hóa.'
   },
-  'evolution.button': {
+  'evolution.evolve': {
     en: 'Evolve',
     vi: 'Tiến hóa'
   },
@@ -62,9 +62,13 @@ export const translations: Translations = {
     en: 'Evolving...',
     vi: 'Đang tiến hóa...'
   },
-  'evolution.restart': {
-    en: 'Restart',
+  'evolution.reset': {
+    en: 'Reset',
     vi: 'Bắt đầu lại'
+  },
+  'evolution.stage': {
+    en: 'Evolution Stage',
+    vi: 'Giai đoạn tiến hóa'
   },
   'evolution.selectPrompt': {
     en: 'Select a Pokémon to start',

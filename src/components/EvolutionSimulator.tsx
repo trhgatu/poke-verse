@@ -314,8 +314,8 @@ const EvolutionControls: React.FC<EvolutionControlsProps> = ({
           <button
             onClick={handleReset}
             disabled={currentStage === 0 || isLoading}
-            className={`flex items-center justify-center py-1 sm:py-1.5 px-2 sm:px-3 rounded-md border border-zinc-700
-                      ${currentStage === 0 || isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-zinc-800 active:bg-zinc-700'}
+            className={`flex items-center justify-center py-1 sm:py-1.5 px-2 sm:px-3 rounded-md border border-zinc-700 bg-white
+                      ${currentStage === 0 || isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-80 active:bg-zinc-700'}
                       transition-colors duration-200 text-xs sm:text-sm`}
           >
             <RefreshCw size={14} className="mr-1 sm:mr-1.5" />
@@ -343,9 +343,6 @@ const EvolutionControls: React.FC<EvolutionControlsProps> = ({
                 {t('evolution.evolve')}
               </span>
             )}
-
-            {/* Pokeball background for the button */}
-            <div className="absolute inset-0 bg-pokeball-detail bg-no-repeat bg-center bg-contain opacity-10"></div>
           </button>
         </div>
       </div>
