@@ -261,7 +261,7 @@ export const EvolutionChain: React.FC<EvolutionChainProps> = ({ chain }) => {
   if (isLoading) {
     return (
       <div className="flex flex-col">
-        <div className="flex flex-wrap justify-center items-center gap-2 md:gap-4">
+        <div className="flex flex-col justify-center items-center gap-2 md:gap-4">
           {/* Simulating a 3-stage evolution chain skeleton */}
           {[...Array(3)].map((_, index) => (
             <React.Fragment key={index}>
@@ -297,7 +297,7 @@ export const EvolutionChain: React.FC<EvolutionChainProps> = ({ chain }) => {
 
   return (
     <div className="flex flex-col">
-      <div className="flex flex-wrap justify-center items-center gap-2 md:gap-4">
+      <div className="flex flex-col md:flex-row justify-center items-center gap-2 md:gap-4">
         {evolutionData.map((pokemon, index) => (
           <React.Fragment key={pokemon.id}>
             {/* Add arrow between evolution stages */}

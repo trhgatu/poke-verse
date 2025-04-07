@@ -295,8 +295,6 @@ export const HomePage: React.FC = () => {
           />
         </div>
       </motion.div>
-
-      {/* Loading indicator when filtering by type or searching */}
       {(selectedType || searchFilter) && isLoading && (
         <motion.div
           className="flex justify-center my-8"
@@ -313,7 +311,6 @@ export const HomePage: React.FC = () => {
         </motion.div>
       )}
 
-      {/* Pokemon grid */}
       {pokemonList && (
         <>
           {filteredPokemon.length > 0 ? (

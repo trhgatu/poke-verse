@@ -55,7 +55,6 @@ export const EncounterList: React.FC<EncounterListProps> = ({ encounters, locati
         />
       </div>
 
-      {/* No results message */}
       {filteredEncounters.length === 0 && (
         <div className="text-center py-8 text-zinc-400">
           No Pokémon found matching "{searchTerm}"
