@@ -47,7 +47,7 @@ export const StatsComparisonChart: React.FC<StatsComparisonChartProps> = ({ poke
   };
 
   // Helper function to get stat color
-  const getColorClass = (index: number, isPokemon1: boolean): string => {
+  const getColorClass = (_index: number, isPokemon1: boolean): string => {
     if (isPokemon1) {
       return 'bg-gradient-to-r from-red-500 to-red-600';
     } else {
