@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, Map, Dna } from 'lucide-react';
+import { Heart, Map, Dna, ChartColumn } from 'lucide-react';
 import { Button } from './ui/button';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -44,7 +44,13 @@ export const NavBar: React.FC = () => {
 
           <Button
             variant="ghost"
-            onClick={() => navigate('/favorites')}
+            onClick={() => navigate('/compare')}
+            className="flex items-center gap-2 transition-all duration-300"
+          >
+            <ChartColumn size={20} className="text-blue-500" />
+            <span className="hidden md:inline">{t('nav.compare')}</span>
+          </Button>
+          <Button variant="ghost" onClick={() => navigate('/favorites')}
             className="flex items-center gap-2 transition-all duration-300"
           >
             <Heart size={20} className="text-red-500" />

@@ -12,6 +12,10 @@ export const translations: Translations = {
     en: 'Regions',
     vi: 'Vùng'
   },
+  'nav.compare': {
+    en: 'Compare',
+    vi: 'So sánh'
+  },
   'nav.evolution': {
     en: 'Evolution',
     vi: 'Tiến hóa'
@@ -134,7 +138,11 @@ export const translations: Translations = {
     en: 'Hide Mega Evolution Forms',
     vi: 'Ẩn hình thức Mega Tiến hóa'
   },
-
+  //Compare Page
+  'compare.mightHaveAdvantage': {
+    en: 'might have the advantage',
+    vi: 'có lợi thế hơn dựa trên tổng chỉ số'
+  },
   // Home Page
   'home.title': {
     en: 'Explore the World of Pokémon',
@@ -191,6 +199,96 @@ export const translations: Translations = {
   'home.clearFilters': {
     en: 'Clear Filters',
     vi: 'Xóa bộ lọc'
+  },
+
+  // Compare Page
+  'compare.title': {
+    en: 'Compare Pokémon Stats',
+    vi: 'So sánh chỉ số Pokémon'
+  },
+  'compare.description': {
+    en: 'Select two Pokémon to compare their stats and see which one has the advantage in battle.',
+    vi: 'Chọn hai Pokémon để so sánh chỉ số và xem Pokémon nào có lợi thế trong trận đấu.'
+  },
+  'compare.battlePrediction': {
+    en: 'Battle Prediction',
+    vi: 'Dự đoán trận đấu'
+  },
+  'compare.selectPokemon1': {
+    en: 'Select Pokémon 1',
+    vi: 'Chọn Pokémon 1'
+  },
+  'compare.selectPokemon2': {
+    en: 'Select Pokémon 2',
+    vi: 'Chọn Pokémon 2'
+  },
+  'compare.searchPlaceholder': {
+    en: 'Search Pokémon...',
+    vi: 'Tìm kiếm Pokémon...'
+  },
+  'compare.loading': {
+    en: 'Loading...',
+    vi: 'Đang tải...'
+  },
+  'compare.noResults': {
+    en: 'No Pokémon found',
+    vi: 'Không tìm thấy Pokémon'
+  },
+  'compare.chartTitle': {
+    en: 'Stats Comparison Chart',
+    vi: 'Biểu đồ so sánh chỉ số'
+  },
+  'compare.selectAtLeastOne': {
+    en: 'Select at least one Pokémon to view stats',
+    vi: 'Chọn ít nhất một Pokémon để xem chỉ số'
+  },
+  'compare.stats.hp': {
+    en: 'HP',
+    vi: 'HP'
+  },
+  'compare.stats.attack': {
+    en: 'Attack',
+    vi: 'Tấn công'
+  },
+  'compare.stats.defense': {
+    en: 'Defense',
+    vi: 'Phòng thủ'
+  },
+  'compare.stats.specialAttack': {
+    en: 'Special Attack',
+    vi: 'Tấn công đặc biệt'
+  },
+  'compare.stats.specialDefense': {
+    en: 'Special Defense',
+    vi: 'Phòng thủ đặc biệt'
+  },
+  'compare.stats.speed': {
+    en: 'Speed',
+    vi: 'Tốc độ'
+  },
+  'compare.stats.total': {
+    en: 'Total Stats',
+    vi: 'Tổng chỉ số'
+  },
+  'compare.otherInfo': {
+    en: 'Other Information',
+    vi: 'Thông tin khác'
+  },
+  'compare.attributes.type': {
+    en: 'Type',
+    vi: 'Loại'
+  },
+  'compare.attributes.height': {
+    en: 'Height',
+    vi: 'Chiều cao'
+  },
+  'compare.attributes.weight': {
+    en: 'Weight',
+    vi: 'Cân nặng'
+  },
+  'compare.attributes.abilities': {
+    en: 'Abilities',
+    vi: 'Khả năng'
   },
 
   // Pokemon Details

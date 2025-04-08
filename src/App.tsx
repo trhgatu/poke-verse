@@ -7,6 +7,7 @@ import { RegionsPage } from './pages/RegionsPage';
 import { RegionDetailPage } from './pages/RegionDetailPage';
 import { LocationDetailPage } from './pages/LocationDetailPage';
 import { EvolutionSimulatorPage } from './pages/EvolutionSimulatorPage';
+import { ComparePage } from './pages/ComparePage';
 import './App.css';
 import './assets/pokemon-colors.css';
 
@@ -22,6 +23,7 @@ function App() {
           <Route path="regions/:name" element={<RegionDetailPage />} />
           <Route path="locations/:name" element={<LocationDetailPage />} />
           <Route path="evolution-simulator" element={<EvolutionSimulatorPage />} />
+          <Route path="compare" element={<ComparePage />} />
         </Route>
       </Routes>
     </Router>
