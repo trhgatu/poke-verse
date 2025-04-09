@@ -29,10 +29,10 @@ Follow these steps to run the project locally:
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/your-username/pokeverse.git
+git clone https://github.com/trhgaty/poke-verse.git
 
 # 2. Navigate into the project folder
-cd pokeverse
+cd poke-verse
 
 # 3. Install dependencies
 npm install
@@ -59,6 +59,7 @@ src/
 └── main.tsx         # Application entry point
 ```
 ## 🧪 Future Enhancements
+
 - 🔎 Search functionality with autocomplete
 - 🔃 Filter by type, generation, and abilities
 - 🌗 Toggle between dark and light themes
@@ -66,13 +67,16 @@ src/
 - 📱 Improved mobile gesture support
 
 ## 🤝 Contributing
+
 Want to improve the project or add new features? Contributions are welcome!
 Feel free to fork the repo and submit a pull request.
 
 ## 📄 License
+
 This project is licensed under the MIT License.
 
 ## 👨‍💻 Author
+
 Made with ❤️ by trhgatu
 
 ## Thanks for checking out PokeVerse! Gotta catch 'em all!
